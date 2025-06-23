@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Matrix Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      background: black;
+      color: #00ff00;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      user-select: none;
+    }
+
+    canvas.matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
+    }
+
+    h1 {
+      font-size: 20px;
+      margin-bottom: 20px;
+      text-shadow: 0 0 5px #00ff00;
+    }
+
+    .access-log {
+      font-size: 18px;
+      margin-top: 20px;
+      white-space: pre-line;
+      display: block;
+    }
+
+    #dino {
+      margin-top: 20px;
+    }
+
+    #telegram-warning {
+      margin-top: 20px;
+      font-weight: 700;
+      color: #ff0000;
+      font-size: 16px;
+      user-select: text;
+    }
+  </style>
+</head>
+<body>
+  <canvas class="matrix"></canvas>
+  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
+
+  <div id="accessLog" class="access-log">
+    ACCESS GRANTED  
+    ROUTING: NODE_713
+  </div>
+
+  <canvas id="dino" width="160" height="80"></canvas>
+  <div id="shadow-host"></div>
+  <div id="telegram-warning">на вашем устройстве обязательно должен быть установлен Telegram.</div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // MATRIX background
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const letters = Array(256).join("01").split("");
+    const fontSize = 12;
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#0F0";
+      letters.forEach((y_pos, index) => {
+        const text = String.fromCharCode(3e4 + Math.random() * 33);
+        const x_pos = index * fontSize;
+        ctx.fillText(text, x_pos, y_pos);
+        letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : y_pos + fontSize;
+      });
+    }
+    setInterval(drawMatrix, 50);
+
+    // AES-зашифрованная ссылка
+    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
+    const enc = "/v0r1VKldkKAVs83qkojD+9ythd3GNRaCfiJSfAxwnThXerQ4eK8YUCw48nDaTi3";
+
+    // 1000 фейковых ссылок
+    const fakeLinks = [];
+    for (let i = 1; i <= 1000; i++) {
+      fakeLinks.push("https://join-proxy" + i + ".fake");
+    }
+    const fake = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+
+    // Shadow DOM + кнопка
+    const host = document.getElementById("shadow-host");
+    const shadow = host.attachShadow({ mode: "closed" });
+    const btn = document.createElement("button");
+    btn.innerHTML = "<b>Связаться</b>";
+    btn.title = fake;
+    btn.setAttribute("style", "padding:12px 24px;border:2px solid #00ff00;background:transparent;color:#00ff00;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
+    btn.onmouseenter = () => { btn.style.background = "#00ff00"; btn.style.color = "black"; };
+    btn.onmouseleave = () => { btn.style.background = "transparent"; btn.style.color = "#00ff00"; };
+    btn.onclick = () => {
+      const raw = CryptoJS.enc.Base64.parse(enc);
+      const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
+      const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
+      const decrypted = CryptoJS.AES.decrypt({ ciphertext: ct }, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+      const link = decrypted.toString(CryptoJS.enc.Utf8);
+      window.location.href = link;
+    };
+    shadow.appendChild(btn);
+
+    // Блокировки
+    document.addEventListener("keydown", e => {
+      if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")  (e.ctrlKey && e.key.toLowerCase() === "u")) {
+        e.preventDefault(); alert("Доступ запрещён");
+      }
+    });
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
+
+    // Примитивная анимация динозавра
+    const dinoCanvas = document.getElementById("dino");
+    const dCtx = dinoCanvas.getContext("2d");
+    let frame = 0;
+    function drawDino() {
+      dCtx.clearRect(0, 0, dinoCanvas.width, dinoCanvas.height);
+      dCtx.fillStyle = "#00ff00";
+      dCtx.beginPath(); dCtx.ellipse(80, 40, 40, 30, 0, 0, Math.PI * 2); dCtx.fill(); // тело
+      dCtx.beginPath(); dCtx.ellipse(120, 35, 20, 25, 0, 0, Math.PI * 2); dCtx.fill(); // голова
+      dCtx.fillStyle = "black";
+      dCtx.beginPath(); dCtx.ellipse(130, 30, 5, 7, 0, 0, Math.PI * 2); dCtx.fill(); // глаз
+      dCtx.fillStyle = "#00ff00";
+      const legOffset = frame % 20 < 10 ? 5 : -5;
+      dCtx.beginPath(); dCtx.ellipse(60, 70 + legOffset, 10, 15, 0, 0, Math.PI * 2); dCtx.fill();
+      dCtx.beginPath(); dCtx.ellipse(100, 70 - legOffset, 10, 15, 0, 0, Math.PI * 2); dCtx.fill();
+      const tailOffset = frame % 40 < 20 ? 10 : -10;
+      dCtx.beginPath(); dCtx.moveTo(40, 40); dCtx.lineTo(10, 30 + tailOffset); dCtx.lineTo(20, 50 + tailOffset); dCtx.closePath(); dCtx.fill();
+      frame++;
+    }
+    setInterval(drawDino, 150);
+  </script>
+</body>
+</html>
