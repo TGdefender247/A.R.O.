@@ -10,12 +10,10 @@
       margin: 0;
       padding: 0;
       height: 100%;
-      width: 100%;
       overflow: hidden;
       font-family: 'Share Tech Mono', monospace;
       background: black;
       color: white;
-      text-shadow: 0 0 15px white, 0 0 25px white;
     }
 
     #skull-bg {
@@ -24,7 +22,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: url('skull.png') no-repeat center center;
+      background: url('data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD...'); no-repeat center center;
       background-size: cover;
       z-index: -3;
     }
@@ -33,9 +31,9 @@
       position: fixed;
       top: 0;
       left: 0;
-      z-index: -2;
       width: 100vw;
       height: 100vh;
+      z-index: -2;
       pointer-events: none;
     }
 
@@ -46,6 +44,7 @@
       justify-content: center;
       text-align: center;
       user-select: none;
+      text-shadow: 0 0 15px white, 0 0 25px white;
     }
 
     h1 {
@@ -106,14 +105,11 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // КРАСНАЯ МАТРИЦА
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
 
-    let width = window.innerWidth;
-    let height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
+    let width = canvas.width = window.innerWidth;
+    let height = canvas.height = window.innerHeight;
 
     const fontSize = 14;
     const columns = Math.floor(width / fontSize);
@@ -122,7 +118,6 @@
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
-
       ctx.fillStyle = "#ff0000";
       ctx.font = fontSize + "px monospace";
 
@@ -130,20 +125,19 @@
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
         const x = i * fontSize;
         const y = drops[i] * fontSize;
-
         ctx.fillText(text, x, y);
-
-        if (y > height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-
+        if (y > height && Math.random() > 0.975) drops[i] = 0;
         drops[i]++;
       }
     }
 
     setInterval(drawMatrix, 50);
 
-    // СЕКРЕТНАЯ ССЫЛКА
+    window.addEventListener('resize', () => {
+      width = canvas.width = window.innerWidth;
+      height = canvas.height = window.innerHeight;
+    });
+
     const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
     const enc = "/v0r1VKldkKAVs83qkojD+9ythd3GNRaCfiJSfAxwnThXerQ4eK8YUCw48nDaTi3";
 
@@ -171,7 +165,6 @@
     };
     shadow.appendChild(btn);
 
-    // ЗАЩИТА
     document.addEventListener("keydown", e => {
       if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")  (e.ctrlKey && e.key.toLowerCase() === "u")) {
         e.preventDefault(); alert("Доступ запрещён");
@@ -180,13 +173,6 @@
     document.body.oncontextmenu = e => e.preventDefault();
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
-
-    window.addEventListener("resize", () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-    });
   </script>
 </body>
 </html>
