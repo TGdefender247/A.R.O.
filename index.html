@@ -8,14 +8,17 @@
   <style>
     html, body {
       margin: 0;
-      padding: 0;
-      height: 100%;
       background: black;
+      color: #ff0000;
       font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
       overflow: hidden;
       user-select: none;
-      color: #ff0000;
-      text-align: center;
     }
 
     #skull-bg {
@@ -33,19 +36,9 @@
       position: fixed;
       top: 0;
       left: 0;
+      width: 100vw;
+      height: 100vh;
       z-index: -2;
-    }
-
-    h1, .access-log, #telegram-warning, #skull, .manifest, .title-main {
-      position: relative;
-      z-index: 1;
-    }
-
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
     }
 
     h1 {
@@ -59,6 +52,7 @@
       font-size: 18px;
       margin-top: 20px;
       white-space: pre-line;
+      display: block;
       color: white;
       text-shadow: 0 0 5px white;
     }
@@ -105,12 +99,11 @@
 
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">
+  <div id="accessLog" class="access-log">
     ACCESS GRANTED  
     ROUTING: NODE_713
   </div>
 
-  <canvas id="skull" width="160" height="160"></canvas>
   <div id="shadow-host"></div>
   <div id="telegram-warning">на вашем устройстве обязательно должен быть установлен Telegram.</div>
 
@@ -126,7 +119,7 @@
     const fontSize = 14;
 
     function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.07)";
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000";
       ctx.font = fontSize + "px monospace";
@@ -169,7 +162,7 @@
     };
     shadow.appendChild(btn);
 
-    // БЛОКИРОВКИ
+    // Блокировки
     document.addEventListener("keydown", e => {
       if (
         e.key === "F12" ||
@@ -183,46 +176,6 @@
     document.body.oncontextmenu = e => e.preventDefault();
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
-
-    // ЧЕРЕП на canvas
-    const skullCanvas = document.getElementById("skull");
-    const sCtx = skullCanvas.getContext("2d");
-
-    function drawSkull() {
-      sCtx.clearRect(0, 0, skullCanvas.width, skullCanvas.height);
-      sCtx.fillStyle = "#ff0000";
-
-      // череп
-      sCtx.beginPath();
-      sCtx.ellipse(80, 70, 40, 50, 0, 0, Math.PI * 2);
-      sCtx.fill();
-
-      // глаза
-      sCtx.fillStyle = "black";
-      sCtx.beginPath();
-      sCtx.ellipse(65, 60, 8, 12, 0, 0, Math.PI * 2);
-      sCtx.fill();
-
-      sCtx.beginPath();
-      sCtx.ellipse(95, 60, 8, 12, 0, 0, Math.PI * 2);
-      sCtx.fill();
-
-      // нос
-      sCtx.beginPath();
-      sCtx.moveTo(78, 75);
-      sCtx.lineTo(82, 75);
-      sCtx.lineTo(80, 85);
-      sCtx.closePath();
-      sCtx.fill();
-
-      // зубы
-      sCtx.fillStyle = "white";
-      for (let i = 0; i < 6; i++) {
-        sCtx.fillRect(62 + i * 6, 100, 4, 10);
-      }
-    }
-
-    setInterval(drawSkull, 200);
   </script>
 </body>
 </html>
