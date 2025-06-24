@@ -4,16 +4,18 @@
   <meta charset="UTF-8" />
   <title>ABYSS RED OVERRIDE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
-      font-family: 'Share Tech Mono', monospace;
       background: black;
-      color: white;
+      font-family: 'Share Tech Mono', monospace;
+      overflow: hidden;
+      user-select: none;
+      color: #ff0000;
+      text-align: center;
     }
 
     #skull-bg {
@@ -31,10 +33,12 @@
       position: fixed;
       top: 0;
       left: 0;
-      width: 100vw;
-      height: 100vh;
       z-index: -2;
-      pointer-events: none;
+    }
+
+    h1, .access-log, #telegram-warning, #skull, .manifest, .title-main {
+      position: relative;
+      z-index: 1;
     }
 
     body {
@@ -42,48 +46,48 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      text-align: center;
-      user-select: none;
-      text-shadow: 0 0 15px white, 0 0 25px white;
-    }
-
-    h1, .access-log, #telegram-warning, .quote-block {
-      z-index: 1;
-      position: relative;
     }
 
     h1 {
       font-size: 20px;
       margin-bottom: 20px;
+      color: white;
+      text-shadow: 0 0 5px white, 0 0 10px white;
     }
 
     .access-log {
       font-size: 18px;
       margin-top: 20px;
       white-space: pre-line;
+      color: white;
+      text-shadow: 0 0 5px white;
     }
 
     #telegram-warning {
       margin-top: 20px;
       font-weight: 700;
-      font-size: 16px;
       color: white;
-      text-shadow: 0 0 15px red;
+      font-size: 16px;
+      user-select: text;
+      text-shadow: 0 0 5px red;
     }
 
-    .quote-block {
+    .title-main {
+      font-size: 32px;
+      font-weight: bold;
       margin-top: 40px;
+      color: #ff0000;
+      text-shadow: 0 0 10px white, 0 0 20px white;
+    }
+
+    .manifest {
+      margin-top: 20px;
       font-size: 16px;
       max-width: 90vw;
       line-height: 1.6;
       white-space: pre-line;
-    }
-
-    .override-title {
-      font-size: 28px;
-      color: #ff0000;
-      text-shadow: 0 0 10px white, 0 0 20px white;
-      margin-bottom: 16px;
+      color: white;
+      text-shadow: 0 0 5px white;
     }
   </style>
 </head>
@@ -91,62 +95,53 @@
   <div id="skull-bg"></div>
   <canvas class="matrix"></canvas>
 
+  <div class="title-main">ABYSS RED OVERRIDE</div>
+
+  <div class="manifest">
+    мы не витрина! Мы механизм!  
+    Рынок это иллюзия. Снос это геометрия.  
+    Обход — это язык, на котором Telegram не умеет отвечать.
+  </div>
+
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div id="accessLog" class="access-log">
+  <div class="access-log">
     ACCESS GRANTED  
     ROUTING: NODE_713
   </div>
 
-  <div class="quote-block">
-    <div class="override-title">ABYSS RED OVERRIDE</div>
-    мы не витрина! Мы механизм!<br>
-    Рынок это иллюзия. Снос это геометрия.<br>
-    Обход — это язык, на котором Telegram не умеет отвечать.
-  </div>
-
+  <canvas id="skull" width="160" height="160"></canvas>
   <div id="shadow-host"></div>
   <div id="telegram-warning">на вашем устройстве обязательно должен быть установлен Telegram.</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
+    // КРАСНАЯ МАТРИЦА
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
 
-    let width = canvas.width = window.innerWidth;
-    let height = canvas.height = window.innerHeight;
-
-    let fontSize = 18;
-    let columns = Math.floor(width / fontSize);
-    let drops = Array(columns).fill(1);
+    const letters = Array(256).join("01").split("");
+    const fontSize = 14;
 
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.07)";
-      ctx.fillRect(0, 0, width, height);
-
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000";
       ctx.font = fontSize + "px monospace";
 
-      for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        const x = i * fontSize;
-        const y = drops[i] * fontSize;
-        ctx.fillText(text, x, y);
-
-        if (y > height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
+      letters.forEach((y_pos, index) => {
+        const text = String.fromCharCode(3e4 + Math.random() * 33);
+        const x_pos = index * fontSize;
+        ctx.fillText(text, x_pos, y_pos);
+        letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : y_pos + fontSize;
+      });
     }
 
-    setInterval(drawMatrix, 40);
+    setInterval(drawMatrix, 50);
 
-    window.addEventListener('resize', () => {
-      width = canvas.width = window.innerWidth;
-      height = canvas.height = window.innerHeight;
-      columns = Math.floor(width / fontSize);
-      drops = Array(columns).fill(1);
-    });
-
+    // ЗАШИФРОВАННАЯ ССЫЛКА
     const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
     const enc = "/v0r1VKldkKAVs83qkojD+9ythd3GNRaCfiJSfAxwnThXerQ4eK8YUCw48nDaTi3";
 
@@ -161,15 +156,9 @@
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
     btn.title = fake;
-    btn.setAttribute("style", "padding:12px 24px;border:2px solid white;background:transparent;color:white;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
-    btn.onmouseenter = () => {
-      btn.style.background = "white";
-      btn.style.color = "black";
-    };
-    btn.onmouseleave = () => {
-      btn.style.background = "transparent";
-      btn.style.color = "white";
-    };
+    btn.setAttribute("style", "padding:12px 24px;border:2px solid #ff0000;background:transparent;color:#ff0000;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
+    btn.onmouseenter = () => { btn.style.background = "#ff0000"; btn.style.color = "black"; };
+    btn.onmouseleave = () => { btn.style.background = "transparent"; btn.style.color = "#ff0000"; };
     btn.onclick = () => {
       const raw = CryptoJS.enc.Base64.parse(enc);
       const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
@@ -180,6 +169,7 @@
     };
     shadow.appendChild(btn);
 
+    // БЛОКИРОВКИ
     document.addEventListener("keydown", e => {
       if (
         e.key === "F12" ||
@@ -193,6 +183,46 @@
     document.body.oncontextmenu = e => e.preventDefault();
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
+
+    // ЧЕРЕП на canvas
+    const skullCanvas = document.getElementById("skull");
+    const sCtx = skullCanvas.getContext("2d");
+
+    function drawSkull() {
+      sCtx.clearRect(0, 0, skullCanvas.width, skullCanvas.height);
+      sCtx.fillStyle = "#ff0000";
+
+      // череп
+      sCtx.beginPath();
+      sCtx.ellipse(80, 70, 40, 50, 0, 0, Math.PI * 2);
+      sCtx.fill();
+
+      // глаза
+      sCtx.fillStyle = "black";
+      sCtx.beginPath();
+      sCtx.ellipse(65, 60, 8, 12, 0, 0, Math.PI * 2);
+      sCtx.fill();
+
+      sCtx.beginPath();
+      sCtx.ellipse(95, 60, 8, 12, 0, 0, Math.PI * 2);
+      sCtx.fill();
+
+      // нос
+      sCtx.beginPath();
+      sCtx.moveTo(78, 75);
+      sCtx.lineTo(82, 75);
+      sCtx.lineTo(80, 85);
+      sCtx.closePath();
+      sCtx.fill();
+
+      // зубы
+      sCtx.fillStyle = "white";
+      for (let i = 0; i < 6; i++) {
+        sCtx.fillRect(62 + i * 6, 100, 4, 10);
+      }
+    }
+
+    setInterval(drawSkull, 200);
   </script>
 </body>
 </html>
