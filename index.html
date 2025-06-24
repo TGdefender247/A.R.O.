@@ -15,7 +15,7 @@
       font-family: 'Share Tech Mono', monospace;
       background: black;
       color: white;
-      text-shadow: 0 0 6px rgba(255, 255, 255, 0.25);
+      text-shadow: 0 0 15px white, 0 0 25px white;
     }
 
     #skull-bg {
@@ -24,17 +24,19 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: url('skull.jpg') no-repeat center center;
+      background: url('skull.png') no-repeat center center;
       background-size: cover;
-      background-attachment: fixed;
-      z-index: -2;
+      z-index: -3;
     }
 
     canvas.matrix {
       position: fixed;
       top: 0;
       left: 0;
-      z-index: -1;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+      pointer-events: none;
     }
 
     body {
@@ -62,7 +64,7 @@
       font-weight: 700;
       font-size: 16px;
       color: white;
-      text-shadow: 0 0 10px red;
+      text-shadow: 0 0 15px red;
     }
 
     .quote-block {
@@ -72,8 +74,6 @@
       line-height: 1.6;
       text-align: center;
       white-space: pre-line;
-      color: white;
-      text-shadow: 0 0 6px rgba(255, 255, 255, 0.3);
     }
   </style>
 </head>
@@ -112,20 +112,26 @@
     window.addEventListener('resize', resizeCanvas);
     resizeCanvas();
 
-    const letters = Array(256).join("01").split("");
-    const fontSize = 12;
+    const columns = Math.floor(window.innerWidth / 12);
+    const drops = Array(columns).fill(0);
 
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000";
-      letters.forEach((y_pos, index) => {
-        const text = String.fromCharCode(3e4 + Math.random() * 33);
-        const x_pos = index * fontSize;
-        ctx.fillText(text, x_pos, y_pos);
-        letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : y_pos + fontSize;
-      });
+      ctx.font = "12px monospace";
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        const x = i * 12;
+        const y = drops[i] * 12;
+
+        ctx.fillText(text, x, y);
+        if (y > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        else drops[i]++;
+      }
     }
+
     setInterval(drawMatrix, 50);
 
     // СЕКРЕТНАЯ ССЫЛКА
