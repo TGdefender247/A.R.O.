@@ -100,18 +100,26 @@
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const letters = Array(256).join("01").split("");
     const fontSize = 12;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = Math.random() * canvas.height;
+
+    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#0F0";
-      letters.forEach((y_pos, index) => {
-        const text = String.fromCharCode(3e4 + Math.random() * 33);
-        const x_pos = index * fontSize;
-        ctx.fillText(text, x_pos, y_pos);
-        letters[index] = y_pos > canvas.height + Math.random() * 1e4 ? 0 : y_pos + fontSize;
-      });
+
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, drops[i]);
+        drops[i] += fontSize;
+        if (drops[i] > canvas.height + Math.random() * 10000) {
+          drops[i] = 0;
+        }
+      }
     }
     setInterval(drawMatrix, 50);
 
@@ -135,26 +143,36 @@
     btn.setAttribute("style", "padding:12px 24px;border:2px solid #00ff00;background:transparent;color:#00ff00;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
     btn.onmouseenter = () => { btn.style.background = "#00ff00"; btn.style.color = "black"; };
     btn.onmouseleave = () => { btn.style.background = "transparent"; btn.style.color = "#00ff00"; };
-    btn.onclick = () => { const raw = CryptoJS.enc.Base64.parse(enc);
-      const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
-      const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
-      const decrypted = CryptoJS.AES.decrypt({ ciphertext: ct }, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
-      const link = decrypted.toString(CryptoJS.enc.Utf8);
-      window.location.href = link;
+    btn.onclick = () => {
+      try {
+        const raw = CryptoJS.enc.Base64.parse(enc);
+        const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
+        const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
+        const decrypted = CryptoJS.AES.decrypt({ ciphertext: ct }, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+        const link = decrypted.toString(CryptoJS.enc.Utf8);
+        if (link) {
+          window.location.href = link;
+        } else {
+          alert("Ошибка расшифровки ссылки");
+        }
+      } catch(e) {
+        alert("Ошибка при расшифровке ссылки");
+      }
     };
     shadow.appendChild(btn);
 
-    // Блокировки
+    // Блокировки клавиш и действий
     document.addEventListener("keydown", e => {
       if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")  (e.ctrlKey && e.key.toLowerCase() === "u")) {
-        e.preventDefault(); alert("Доступ запрещён");
+        e.preventDefault();
+        alert("Доступ запрещён");
       }
     });
     document.body.oncontextmenu = e => e.preventDefault();
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
 
-    // Примитивная анимация динозавра
+    // Анимация динозавра
     const dinoCanvas = document.getElementById("dino");
     const dCtx = dinoCanvas.getContext("2d");
     let frame = 0;
@@ -174,6 +192,13 @@
       frame++;
     }
     setInterval(drawDino, 150);
+
+    // Подстройка канваса при изменении размера окна
+    window.addEventListener('resize', () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    });
   </script>
 </body>
 </html>
