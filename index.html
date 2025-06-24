@@ -9,7 +9,7 @@
     body {
       margin: 0;
       background: black;
-      color: #00ff00;
+      color: #ff0000;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -28,10 +28,21 @@
       z-index: -1;
     }
 
+    #skull-bg {
+      background: url('file-LmikhFyK2KWxnYrEjEefsu') no-repeat center center;
+      background-size: cover;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -2;
+    }
+
     h1 {
       font-size: 20px;
       margin-bottom: 20px;
-      text-shadow: 0 0 5px #00ff00;
+      text-shadow: 0 0 5px #ff0000;
     }
 
     .access-log {
@@ -39,23 +50,6 @@
       margin-top: 20px;
       white-space: pre-line;
       display: block;
-    }
-
-    #skull {
-      width: 100vw;
-      height: 100vh;
-      background: url('file-LmikhFyK2KWxnYrEjEefsu') no-repeat center center;
-      background-size: contain;
-      animation: redPulse 2s infinite alternate;
-      position: fixed;
-      top: 0;
-      left: 0;
-      z-index: -2;
-    }
-
-    @keyframes redPulse {
-      from { filter: drop-shadow(0 0 10px red); }
-      to { filter: drop-shadow(0 0 30px red); }
     }
 
     #telegram-warning {
@@ -68,7 +62,7 @@
   </style>
 </head>
 <body>
-  <div id="skull"></div>
+  <div id="skull-bg"></div>
   <canvas class="matrix"></canvas>
 
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
@@ -83,17 +77,18 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // MATRIX background
+    // КРАСНАЯ МАТРИЦА
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const letters = Array(256).join("01").split("");
     const fontSize = 12;
+
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#0F0";
+      ctx.fillStyle = "#ff0000";
       letters.forEach((y_pos, index) => {
         const text = String.fromCharCode(3e4 + Math.random() * 33);
         const x_pos = index * fontSize;
@@ -103,9 +98,10 @@
     }
     setInterval(drawMatrix, 50);
 
-    // Секретная ссылка
+    // СЕКРЕТНАЯ ССЫЛКА
     const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
     const enc = "/v0r1VKldkKAVs83qkojD+9ythd3GNRaCfiJSfAxwnThXerQ4eK8YUCw48nDaTi3";
+
     const fakeLinks = [];
     for (let i = 1; i <= 1000; i++) {
       fakeLinks.push("https://join-proxy" + i + ".fake");
@@ -117,9 +113,9 @@
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
     btn.title = fake;
-    btn.setAttribute("style", "padding:12px 24px;border:2px solid #00ff00;background:transparent;color:#00ff00;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
-    btn.onmouseenter = () => { btn.style.background = "#00ff00"; btn.style.color = "black"; };
-    btn.onmouseleave = () => { btn.style.background = "transparent"; btn.style.color = "#00ff00"; };
+    btn.setAttribute("style", "padding:12px 24px;border:2px solid #ff0000;background:transparent;color:#ff0000;font-size:18px;cursor:pointer;font-family:'Share Tech Mono', monospace;transition:0.3s;");
+    btn.onmouseenter = () => { btn.style.background = "#ff0000"; btn.style.color = "black"; };
+    btn.onmouseleave = () => { btn.style.background = "transparent"; btn.style.color = "#ff0000"; };
     btn.onclick = () => {
       const raw = CryptoJS.enc.Base64.parse(enc);
       const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
@@ -130,7 +126,7 @@
     };
     shadow.appendChild(btn);
 
-    // Блокировки
+    // ЗАЩИТА
     document.addEventListener("keydown", e => {
       if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")  (e.ctrlKey && e.key.toLowerCase() === "u")) {
         e.preventDefault(); alert("Доступ запрещён");
@@ -140,10 +136,5 @@
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
   </script>
-</body>
-</html>
-    <p>📩 Контакт: только в личку. Проверка заявок обязательна.</p>
-    <img class="qr" src="qr.png" alt="QR">
-  </div>
 </body>
 </html>
