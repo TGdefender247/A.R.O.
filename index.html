@@ -133,7 +133,7 @@
     }
     setInterval(drawMatrix, 50);
 
-    // Ключ и зашифрованная ссылка tg://resolve?domain=Tokyo98l
+    // Зашифрованная ссылка на tg://resolve?domain=Tokyo98l
     const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
     const enc = "mymDM/SeYRYODdgyQFGnFDsKzTK2VKa1ku3ZAfnePEs=";
 
@@ -159,23 +159,8 @@
           { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
         );
         const link = decrypted.toString(CryptoJS.enc.Utf8);
-
         if (link && link.startsWith("tg://")) {
-          // Создаем blob с поддельной ссылкой (fake), чтобы скрыть реальную
-          const blob = new Blob(
-            [`<html><head><meta http-equiv="refresh" content="0;url=${link}"></head><body></body></html>`],
-            { type: "text/html" }
-          );
-          const blobUrl = URL.createObjectURL(blob);
-
-          // Открываем blob в новой вкладке/окне (чтобы Telegram открылся)
-          const win = window.open(blobUrl, "_blank");
-
-          // Автоудаляем blobUrl через 3 секунды (для защиты)
-          setTimeout(() => {
-            URL.revokeObjectURL(blobUrl);
-            if (win) win.close();
-          }, 3000);
+          window.location.href = link;
         } else {
           alert("Ошибка расшифровки ссылки");
         }
