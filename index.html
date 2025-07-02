@@ -21,6 +21,7 @@
       text-align: center;
       overflow: hidden;
       user-select: none;
+      position: relative;
     }
     canvas.matrix {
       position: fixed;
@@ -45,7 +46,7 @@
       max-width: 800px;
       margin-bottom: 30px;
     }
-    h1, .access-log, #telegram-warning {
+    h1, .access-log {
       font-weight: 700;
       font-size: 18px;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
@@ -64,10 +65,22 @@
       box-shadow: 0 0 8px #cc0000;
       transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
+      z-index: 10;
     }
     .red-button:hover {
       background-color: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
+    }
+    .footer-note {
+      position: absolute;
+      bottom: 10px;
+      width: 100%;
+      text-align: center;
+      font-size: 14px;
+      color: #aaa;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 1px 1px 1px black;
+      user-select: text;
     }
   </style>
 </head>
@@ -86,9 +99,11 @@
 
   <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
 
-  <div id="telegram-warning">Связь только со смартфона. Telegram должен быть установлен.</div>
-  <br>
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
+
+  <div class="footer-note">
+    We are the top code agency for removing and protecting Telegram links.
+  </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
@@ -118,7 +133,7 @@
     });
 
     // WebWorker
-    const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM="; // зашифрованная ссылка
+    const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM=";
     const workerCode = `
       importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
       onmessage = function(e) {
