@@ -136,7 +136,6 @@
 
   <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
     // MATRIX background — красный цвет
     const canvas = document.querySelector('.matrix');
@@ -150,11 +149,11 @@
 
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
-function drawMatrix() {
+    function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000"; // красный цвет
-    for (let i = 0; i < drops.length; i++) {
+      for (let i = 0; i < drops.length; i++) {
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, drops[i]);
         drops[i] += fontSize;
@@ -165,23 +164,18 @@ function drawMatrix() {
     }
     setInterval(drawMatrix, 50);
 
-    // AES-зашифрованная ссылка
-    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
-    const enc = "/v0r1VKldkKAVs83qkojD+9ythd3GNRaCfiJSfAxwnThXerQ4eK8YUCw48nDaTi3";
-
-    // 1000 фейковых ссылок
-    const fakeLinks = [];
-    for (let i = 1; i <= 1000; i++) {
-      fakeLinks.push("https://join-proxy" + i + ".fake");
-    }
-    const fake = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
-
-    // Shadow DOM + кнопка
+    // Shadow DOM + кнопка с прямой ссылкой
     const host = document.getElementById("shadow-host");
     const shadow = host.attachShadow({ mode: "closed" });
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
-    btn.title = fake;
+    // Чтобы не показывать настоящую ссылку в title, можно рандомизировать фейковую:
+    const fakeLinks = [];
+    for (let i = 1; i <= 1000; i++) {
+      fakeLinks.push("https://join-proxy" + i + ".fake");
+    }
+    btn.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+
     btn.style.cssText = `
       padding: 12px 30px;
       font-family: 'Share Tech Mono', monospace;
@@ -196,6 +190,7 @@ function drawMatrix() {
       transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
     `;
+
     btn.onmouseenter = () => {
       btn.style.backgroundColor = "#ff1a1a";
       btn.style.boxShadow = "0 0 15px #ff1a1a";
@@ -206,33 +201,19 @@ function drawMatrix() {
       btn.style.boxShadow = "0 0 8px #cc0000";
       btn.style.color = "white";
     };
+
     btn.onclick = () => {
-      try {
-        const raw = CryptoJS.enc.Base64.parse(enc);
-        const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
-        const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
-        const decrypted = CryptoJS.AES.decrypt(
-          { ciphertext: ct },
-          key,
-          { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-        );
-        const link = decrypted.toString(CryptoJS.enc.Utf8);
-        if (link) {
-          window.location.href = link;
-        } else {
-          alert("Ошибка расшифровки ссылки");
-        }
-      } catch (e) {
-        alert("Ошибка при расшифровке ссылки");
-      }
+      // Переход напрямую по tg://resolve?domain=Tokyo98l
+      window.location.href = "tg://resolve?domain=Tokyo98l";
     };
+
     shadow.appendChild(btn);
 
-    // Блокировки клавиш и действий
+    // Блокировка клавиш и действий
     document.addEventListener("keydown", (e) => {
       if (
-        e.key === "F12" 
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") 
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
         (e.ctrlKey && e.key.toLowerCase() === "u")
       ) {
         e.preventDefault();
