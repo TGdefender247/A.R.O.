@@ -134,8 +134,9 @@
 
   <div id="shadow-host"></div>
 
-  <div id="telegram-warning">На вашем устройстве обязательно должен быть установлен Telegram. </div>
+  <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
     // MATRIX background — красный цвет
     const canvas = document.querySelector('.matrix');
@@ -164,12 +165,19 @@
     }
     setInterval(drawMatrix, 50);
 
-    // Shadow DOM + кнопка с прямой ссылкой
+    // AES ключ и IV (16 байт)
+    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345"); // ключ 16 байт (можно поменять)
+    const iv = CryptoJS.enc.Utf8.parse("InitializationVe"); // IV 16 байт (можно поменять)
+
+    // Зашифрованная ссылка (Base64), зашифрована "tg://resolve?domain=Tokyo98l"
+    const encryptedLink = "v+H6nB8qOkHqR7+Zq7cqaF8Tl+6tO+vCk+xqQjQ7YzM=";
+
+    // Shadow DOM + кнопка
     const host = document.getElementById("shadow-host");
     const shadow = host.attachShadow({ mode: "closed" });
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
-    // Чтобы не показывать настоящую ссылку в title, можно рандомизировать фейковую:
+    // Рандомный фейк в title
     const fakeLinks = [];
     for (let i = 1; i <= 1000; i++) {
       fakeLinks.push("https://join-proxy" + i + ".fake");
@@ -203,8 +211,21 @@
     };
 
     btn.onclick = () => {
-      // Переход напрямую по tg://resolve?domain=Tokyo98l
-      window.location.href = "tg://resolve?domain=Tokyo98l";
+      try {
+        const decrypted = CryptoJS.AES.decrypt(encryptedLink, key, { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 });
+        const link = decrypted.toString(CryptoJS.enc.Utf8);
+        if (link) {
+          // Создаем Blob с расшифрованной ссылкой
+          const blob = new Blob([link], { type: 'text/plain' });
+          const url = URL.createObjectURL(blob);
+          window.location.href = url;
+          setTimeout(() => URL.revokeObjectURL(url), 1000); // удаляем через 1 секунду
+        } else {
+          alert("Ошибка расшифровки ссылки");
+        }
+      } catch (e) {
+        alert("Ошибка при расшифровке ссылки");
+      }
     };
 
     shadow.appendChild(btn);
