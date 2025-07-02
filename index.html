@@ -136,80 +136,118 @@
 
   <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    (function(){
-      const c='canvas.matrix',ctx=document.querySelector(c).getContext('2d');
-      const w=window.innerWidth,h=window.innerHeight;
-      const fs=12,cols=Math.floor(w/fs),drops=new Array(cols).fill(0).map(()=>Math.random()*h);
-      const host=document.getElementById('shadow-host');
-      const shadow=host.attachShadow({mode:'closed'});
-      const btn=document.createElement('button');
-      btn.innerHTML="<b>Связаться</b>";
-      const fakeLinks=[];
-      for(let i=1;i<=1000;i++)fakeLinks.push('https://join-proxy'+i+'.fake');
-      btn.title=fakeLinks[Math.floor(Math.random()*fakeLinks.length)];
-      btn.style.cssText=`padding:12px 30px;font-family:'Share Tech Mono',monospace;font-size:18px;font-weight:700;cursor:pointer;border:none;border-radius:4px;background-color:#cc0000;color:white;box-shadow:0 0 8px #cc0000;transition:background-color 0.3s,box-shadow 0.3s;user-select:none;`;
-      btn.onmouseenter=()=>{btn.style.backgroundColor="#ff1a1a";btn.style.boxShadow="0 0 15px #ff1a1a";btn.style.color="white"};
-      btn.onmouseleave=()=>{btn.style.backgroundColor="#cc0000";btn.style.boxShadow="0 0 8px #cc0000";btn.style.color="white"};
+    // MATRIX background — красный цвет
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    let width = window.innerWidth;
+    let height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
 
-      // AES key и зашифрованная ссылка (tg://resolve?domain=Tokyo98l)
-      const key=CryptoJS.enc.Utf8.parse("MySecretKey12345");
-      const enc="0b5f042a8b8db2f72a8952a76d04f96b";
+    const fontSize = 12;
+    const columns = Math.floor(width / fontSize);
+    const drops = [];
+    for (let i = 0; i < columns; i++) drops[i] = Math.random() * height;
 
-      function decryptLink(encryptedHex) {
-        // Простейшая симметричная "расшифровка" - для примера
-        // Для реальной AES нужно использовать CryptoJS.AES.decrypt, но в целях примера сделаем простую XOR
-        const hex2bytes = (hex) => hex.match(/.{1,2}/g).map(b=>parseInt(b,16));
-        const bytes = hex2bytes(encryptedHex);
-        let result = '';
-        for(let i=0;i<bytes.length;i++){
-          result+=String.fromCharCode(bytes[i]^42); // XOR 42 для примера
-        }
-        return result;
-      }
+    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
-      btn.onclick=()=>{
-        const link=decryptLink(enc);
-        // Создаём Blob с ссылкой для перехода, чтобы не показывать её в DOM напрямую
-        const blob=new Blob([link],{type:'text/plain'});
-        const url=URL.createObjectURL(blob);
-        window.location.href=url;
-        setTimeout(()=>URL.revokeObjectURL(url),1000);
-      };
-
-      shadow.appendChild(btn);
-
-      document.addEventListener("keydown",e=>{
-        if(e.key==="F12"||(e.ctrlKey&&e.shiftKey&&e.key.toLowerCase()==="i")||(e.ctrlKey&&e.key.toLowerCase()==="u")){
-          e.preventDefault();alert("Доступ запрещён");
-        }
-      });
-      document.body.oncontextmenu=e=>e.preventDefault();
-      document.body.oncopy=e=>e.preventDefault();
-      document.body.oncut=e=>e.preventDefault();
-
-      canvas.width=w;canvas.height=h;ctx.font=fs+"px 'Share Tech Mono', monospace";
-
-      function draw(){
-        ctx.fillStyle="rgba(0,0,0,0.05)";
-        ctx.fillRect(0,0,w,h);
-        ctx.fillStyle="#ff0000";
-        for(let i=0;i<drops.length;i++){
-          const t=String.fromCharCode(0x30A0+Math.random()*96);
-          ctx.fillText(t,i*fs,drops[i]);
-          drops[i]+=fs;
-          if(drops[i]>h+Math.random()*10000)drops[i]=0;
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, width, height);
+      ctx.fillStyle = "#ff0000"; // красный цвет
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, drops[i]);
+        drops[i] += fontSize;
+        if (drops[i] > height + Math.random() * 10000) {
+          drops[i] = 0;
         }
       }
-      setInterval(draw,50);
+    }
+    setInterval(drawMatrix, 50);
 
-      window.addEventListener("resize",()=>{
-        canvas.width=window.innerWidth;
-        canvas.height=window.innerHeight;
-        ctx.font=fs+"px 'Share Tech Mono', monospace";
-      });
-    })();
+    // Shadow DOM + кнопка с защищённым tg:// переходом через Blob
+    const host = document.getElementById("shadow-host");
+    const shadow = host.attachShadow({ mode: "closed" });
+
+    const btn = document.createElement("button");
+    btn.innerHTML = "<b>Связаться</b>";
+
+    // Фейковый title для кнопки, чтобы не светить настоящую ссылку
+    const fakeLinks = [];
+    for (let i = 1; i <= 1000; i++) {
+      fakeLinks.push("https://join-proxy" + i + ".fake");
+    }
+    btn.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+
+    btn.style.cssText = `
+      padding: 12px 30px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #cc0000;
+      color: white;
+      box-shadow: 0 0 8px #cc0000;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+    `;
+
+    btn.onmouseenter = () => {
+      btn.style.backgroundColor = "#ff1a1a";
+      btn.style.boxShadow = "0 0 15px #ff1a1a";
+      btn.style.color = "white";
+    };
+    btn.onmouseleave = () => {
+      btn.style.backgroundColor = "#cc0000";
+      btn.style.boxShadow = "0 0 8px #cc0000";
+      btn.style.color = "white";
+    };
+
+    btn.onclick = () => {
+      const tgLink = "tg://resolve?domain=Tokyo98l";
+      // Создаем Blob с текстом ссылки
+      const blob = new Blob([tgLink], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      // Пытаемся открыть ссылку через Blob URL
+      window.location.href = url;
+      // Отзыв URL через секунду
+      setTimeout(() => URL.revokeObjectURL(url), 1000);
+
+      // Также на всякий случай — сразу попытаться открыть напрямую через window.location
+      setTimeout(() => {
+        window.location.href = tgLink;
+      }, 500);
+    };
+
+    shadow.appendChild(btn);
+
+    // Защита от F12, Ctrl+Shift+I, Ctrl+U
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
+      }
+    });
+    document.body.oncontextmenu = (e) => e.preventDefault();
+    document.body.oncopy = (e) => e.preventDefault();
+    document.body.oncut = (e) => e.preventDefault();
+
+    // Подстройка канваса при изменении размера окна
+    window.addEventListener("resize", () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    });
   </script>
 </body>
 </html>
