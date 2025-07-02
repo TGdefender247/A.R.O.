@@ -51,7 +51,7 @@
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       margin: 10px 0;
     }
-    button {
+    .red-button {
       padding: 12px 30px;
       font-family: 'Share Tech Mono', monospace;
       font-size: 18px;
@@ -63,8 +63,9 @@
       color: white;
       box-shadow: 0 0 8px #cc0000;
       transition: background-color 0.3s, box-shadow 0.3s;
+      user-select: none;
     }
-    button:hover {
+    .red-button:hover {
       background-color: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
     }
@@ -76,22 +77,22 @@
   <div class="red-title">ABYSS RED OVERRIDE</div>
 
   <div class="slogan">
-    мы не витрина. Мы механизм.<br />
-    Рынок — это иллюзия. Снос — это геометрия.<br />
+    мы не витрина. Мы механизм.<br>
+    Рынок — это иллюзия. Снос — это геометрия.<br>
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
 
-  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
+  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
   <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
 
-  <div id="shadow-host"></div>
-
   <div id="telegram-warning">Связь только со смартфона. Telegram должен быть установлен.</div>
+  <br>
+  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // 🔴 MATRIX ANIMATION
+    // MATRIX
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -116,10 +117,8 @@
       canvas.height = window.innerHeight;
     });
 
-    // 🔐 ЗАШИФРОВАННАЯ ССЫЛКА (можно заменить при необходимости)
-    const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM=";
-
-    // 🧵 WebWorker через Blob
+    // WebWorker
+    const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM="; // зашифрованная ссылка
     const workerCode = `
       importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
       onmessage = function(e) {
@@ -137,31 +136,24 @@
     const workerUrl = URL.createObjectURL(blob);
     const worker = new Worker(workerUrl);
 
-    // 🔴 КНОПКА через SHADOW DOM
-    const host = document.getElementById("shadow-host");
-    const shadow = host.attachShadow({ mode: "closed" });
-    const btn = document.createElement("button");
-    btn.innerHTML = "<b>Связаться</b>";
-    btn.onclick = () => {
+    document.getElementById("contactBtn").onclick = () => {
       worker.postMessage(encrypted);
     };
     worker.onmessage = (e) => {
       const url = e.data;
-      const redirectHTML = `
+      const html = `
         <html><head><meta charset="utf-8">
         <meta http-equiv="refresh" content="3;url=${url}">
-        <style>body{background:black;color:red;font-family:monospace;
-        display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
+        <style>body{background:black;color:red;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
         </head><body><h1>Переадресация в Telegram...</h1></body></html>
       `;
-      const blobRedirect = new Blob([redirectHTML], { type: "text/html" });
+      const blobRedirect = new Blob([html], { type: 'text/html' });
       const blobURL = URL.createObjectURL(blobRedirect);
       window.location.href = blobURL;
       setTimeout(() => URL.revokeObjectURL(blobURL), 5000);
     };
-    shadow.appendChild(btn);
 
-    // 🔒 Блокировка F12 и DevTools
+    // DevTools Защита
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
