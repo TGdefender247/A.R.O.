@@ -1,15 +1,17 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
       margin: 0;
-      background: black;
-      color: white;
+      background: black url('skull-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -27,17 +29,27 @@
       z-index: -1;
     }
     .red-title {
+      font-family: Impact, Arial, sans-serif;
       font-size: 56px;
-      font-weight: bold;
+      font-weight: 900;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
+      text-decoration: underline;
       margin-bottom: 30px;
     }
-    .slogan, h1, .access-log, #telegram-warning {
-      color: white;
+    .slogan {
       font-weight: 700;
+      font-size: 20px;
+      line-height: 1.6;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
-      margin-bottom: 20px;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+    h1, .access-log, #telegram-warning {
+      font-weight: 700;
+      font-size: 18px;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      margin: 10px 0;
     }
     button {
       padding: 12px 30px;
@@ -51,7 +63,6 @@
       color: white;
       box-shadow: 0 0 8px #cc0000;
       transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
     }
     button:hover {
       background-color: #ff1a1a;
@@ -61,28 +72,34 @@
 </head>
 <body>
   <canvas class="matrix"></canvas>
+
   <div class="red-title">ABYSS RED OVERRIDE</div>
+
   <div class="slogan">
     мы не витрина. Мы механизм.<br />
     Рынок — это иллюзия. Снос — это геометрия.<br />
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
-  <h1>Нажми “<b>Связаться</b>”</h1>
+
+  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
+
   <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
+
   <div id="shadow-host"></div>
-  <div id="telegram-warning">Убедись, что Telegram установлен на устройстве</div>
+
+  <div id="telegram-warning">Связь только со смартфона. Telegram должен быть установлен.</div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
+    // 🔴 MATRIX ANIMATION
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
-    canvas.width = innerWidth;
-    canvas.height = innerHeight;
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
     const fontSize = 12;
     const columns = Math.floor(canvas.width / fontSize);
     const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -94,57 +111,57 @@
       });
     }
     setInterval(drawMatrix, 50);
-    window.onresize = () => {
-      canvas.width = innerWidth;
-      canvas.height = innerHeight;
-      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-    };
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-    // --- Кнопка через Shadow DOM с AES и Blob
-    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
-    const iv = CryptoJS.enc.Utf8.parse("MySecretIV123456");
+    // 🔐 ЗАШИФРОВАННАЯ ССЫЛКА (можно заменить при необходимости)
     const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM=";
 
-    const shadowHost = document.getElementById("shadow-host");
-    const shadow = shadowHost.attachShadow({ mode: "closed" });
-    const btn = document.createElement("button");
-    btn.innerHTML = "<b>Связаться</b>";
-
-    btn.onclick = () => {
-      try {
-        const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+    // 🧵 WebWorker через Blob
+    const workerCode = `
+      importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
+      onmessage = function(e) {
+        const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
+        const iv = CryptoJS.enc.Utf8.parse("MySecretIV123456");
+        const decrypted = CryptoJS.AES.decrypt(e.data, key, {
           iv: iv,
           mode: CryptoJS.mode.CBC,
           padding: CryptoJS.pad.Pkcs7
         }).toString(CryptoJS.enc.Utf8);
-
-        if (!decrypted) {
-          alert("Ошибка расшифровки ссылки");
-          return;
-        }
-
-        const html = `
-          <html><head><meta charset="utf-8">
-          <meta http-equiv="refresh" content="3;url=${decrypted}">
-          <style>
-            body { background: black; color: red; font-family: monospace;
-              display: flex; align-items: center; justify-content: center;
-              height: 100vh; margin: 0; }
-          </style></head>
-          <body><h1>Переадресация в Telegram...</h1></body></html>
-        `;
-        const blob = new Blob([html], { type: "text/html" });
-        const blobUrl = URL.createObjectURL(blob);
-        window.location.href = blobUrl;
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-      } catch (err) {
-        alert("Ошибка при переходе");
+        postMessage(decrypted);
       }
-    };
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
 
+    // 🔴 КНОПКА через SHADOW DOM
+    const host = document.getElementById("shadow-host");
+    const shadow = host.attachShadow({ mode: "closed" });
+    const btn = document.createElement("button");
+    btn.innerHTML = "<b>Связаться</b>";
+    btn.onclick = () => {
+      worker.postMessage(encrypted);
+    };
+    worker.onmessage = (e) => {
+      const url = e.data;
+      const redirectHTML = `
+        <html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="3;url=${url}">
+        <style>body{background:black;color:red;font-family:monospace;
+        display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
+        </head><body><h1>Переадресация в Telegram...</h1></body></html>
+      `;
+      const blobRedirect = new Blob([redirectHTML], { type: "text/html" });
+      const blobURL = URL.createObjectURL(blobRedirect);
+      window.location.href = blobURL;
+      setTimeout(() => URL.revokeObjectURL(blobURL), 5000);
+    };
     shadow.appendChild(btn);
 
-    // Блокировка клавиш
+    // 🔒 Блокировка F12 и DevTools
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
