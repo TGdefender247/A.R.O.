@@ -7,6 +7,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
+
     body {
       margin: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
@@ -22,12 +23,14 @@
       overflow: hidden;
       user-select: none;
     }
+
     canvas.matrix {
       position: fixed;
       top: 0;
       left: 0;
       z-index: -1;
     }
+
     .red-title {
       font-family: Impact, Arial, sans-serif;
       font-size: 56px;
@@ -40,6 +43,7 @@
       margin-bottom: 30px;
       user-select: text;
     }
+
     .slogan {
       color: white;
       font-weight: 700;
@@ -52,6 +56,7 @@
       margin-bottom: 30px;
       user-select: text;
     }
+
     h1 {
       font-size: 20px;
       margin-bottom: 20px;
@@ -62,6 +67,7 @@
         2px 2px 3px black;
       user-select: text;
     }
+
     .access-log {
       font-size: 18px;
       margin-top: 20px;
@@ -73,6 +79,7 @@
         2px 2px 3px black;
       user-select: text;
     }
+
     #telegram-warning {
       margin-top: 20px;
       font-weight: 700;
@@ -83,6 +90,7 @@
         1px 1px 0 red,
         2px 2px 3px black;
     }
+
     button {
       padding: 12px 30px;
       font-family: 'Share Tech Mono', monospace;
@@ -97,6 +105,7 @@
       transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
     }
+
     button:hover {
       background-color: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
@@ -106,22 +115,29 @@
 </head>
 <body>
   <canvas class="matrix"></canvas>
+
   <div class="red-title">ABYSS RED OVERRIDE</div>
+
   <div class="slogan">
     мы не витрина. Мы механизм.<br />
     Рынок — это иллюзия. Снос — это геометрия.<br />
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
+
   <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
+
   <div id="accessLog" class="access-log">
     ACCESS GRANTED  
     ROUTING: NODE_713
   </div>
+
   <div id="shadow-host"></div>
-  <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
+
+  <div id="telegram-warning">На вашем устройстве обязательно должен быть установлен Telegram. </div>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
+    // MATRIX background
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -131,6 +147,7 @@
     const drops = [];
     for (let x = 0; x < columns; x++) drops[x] = Math.random() * canvas.height;
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -146,67 +163,54 @@
     }
     setInterval(drawMatrix, 50);
 
-    // AES-зашифрованная ссылка (обновлено)
+    // AES-зашифрованная ссылка
     const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
-    const enc = "s0QqQ1q+NUIar2iXHh3Axq2OxZbIphT4TrCTC0eTSAU=";
+    const enc = "zIvqqC2Tb8nNGMBbnZZxZ1IowX6WxZpSkobMkE//jdo=";
 
+    // Генерация фейковой ссылки
     const fakeLinks = [];
     for (let i = 1; i <= 1000; i++) {
       fakeLinks.push("https://join-proxy" + i + ".fake");
     }
     const fake = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
 
+    // Shadow DOM кнопка
     const host = document.getElementById("shadow-host");
     const shadow = host.attachShadow({ mode: "closed" });
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
     btn.title = fake;
-    btn.style.cssText = `
-      padding: 12px 30px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      background-color: #cc0000;
-      color: white;
-      box-shadow: 0 0 8px #cc0000;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
-    `;
-    btn.onmouseenter = () => {
-      btn.style.backgroundColor = "#ff1a1a";
-      btn.style.boxShadow = "0 0 15px #ff1a1a";
-      btn.style.color = "white";
-    };
-    btn.onmouseleave = () => {
-      btn.style.backgroundColor = "#cc0000";
-      btn.style.boxShadow = "0 0 8px #cc0000";
-      btn.style.color = "white";
-    };
+
     btn.onclick = () => {
       try {
         const raw = CryptoJS.enc.Base64.parse(enc);
         const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
         const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
-        const decrypted = CryptoJS.AES.decrypt(
-          { ciphertext: ct },
-          key,
-          { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
-        );
+        const decrypted = CryptoJS.AES.decrypt({ ciphertext: ct }, key, {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        });
         const link = decrypted.toString(CryptoJS.enc.Utf8);
-        if (link) {
-          window.location.href = link;
-        } else {
-          alert("Ошибка расшифровки ссылки");
-        }
+        if (!link) throw new Error();
+
+        const html = `
+          <html><head><meta charset="utf-8">
+          <meta http-equiv="refresh" content="0;url='${link}'">
+          <script>setTimeout(()=>location='${link}',1000)</script>
+          </head><body></body></html>
+        `;
+        const blob = new Blob([html], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+        window.location.href = blobUrl;
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
       } catch (e) {
         alert("Ошибка при расшифровке ссылки");
       }
     };
     shadow.appendChild(btn);
 
+    // Защита от копирования
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
@@ -221,6 +225,7 @@
     document.body.oncopy = (e) => e.preventDefault();
     document.body.oncut = (e) => e.preventDefault();
 
+    // Обновление canvas при resize
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
