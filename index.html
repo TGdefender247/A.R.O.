@@ -105,10 +105,10 @@
   <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
   <div id="accessLog" class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
   <div id="shadow-host"></div>
-  <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
+  <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram.</div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // matrix background
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -118,7 +118,6 @@
     const drops = [];
     for (let x = 0; x < columns; x++) drops[x] = Math.random() * canvas.height;
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -129,63 +128,82 @@
         drops[i] += fontSize;
         if (drops[i] > canvas.height + Math.random() * 10000) {
           drops[i] = 0;
-        }
+          }
       }
     }
     setInterval(drawMatrix, 50);
-    // скрытая ссылка на Telegram
-    const tgLink = "tg://resolve?domain=Tokyo98l";
 
-    // фейковый title
+    // Ключ и зашифрованная ссылка tg://resolve?domain=Tokyo98l
+    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
+    const enc = "mymDM/SeYRYODdgyQFGnFDsKzTK2VKa1ku3ZAfnePEs=";
+
     const fakeLinks = [];
-    for (let i = 1; i <= 1000; i++) fakeLinks.push("https://join-proxy" + i + ".fake");
+    for (let i = 1; i <= 1000; i++) {
+      fakeLinks.push("https://join-proxy" + i + ".fake");
+    }
     const fake = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
 
-    // кнопка через Shadow DOM
     const host = document.getElementById("shadow-host");
     const shadow = host.attachShadow({ mode: "closed" });
     const btn = document.createElement("button");
     btn.innerHTML = "<b>Связаться</b>";
     btn.title = fake;
-
     btn.onclick = () => {
-      const html = `
-        <html><head><meta charset="utf-8">
-        <meta http-equiv="refresh" content="0;url='${tgLink}'">
-        <script>
-          setTimeout(() => { location.href = '${tgLink}'; }, 1000);
-        </script>
-        </head><body></body></html>
-      `;
+      try {
+        const raw = CryptoJS.enc.Base64.parse(enc);
+        const iv = CryptoJS.lib.WordArray.create(raw.words.slice(0, 4));
+        const ct = CryptoJS.lib.WordArray.create(raw.words.slice(4), raw.sigBytes - 16);
+        const decrypted = CryptoJS.AES.decrypt(
+          { ciphertext: ct },
+          key,
+          { iv: iv, mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }
+        );
+        const link = decrypted.toString(CryptoJS.enc.Utf8);
 
-const blob = new Blob([html], { type: "text/html" });
-const blobUrl = URL.createObjectURL(blob);
-window.location.href = blobUrl;
-setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-};
+        if (link && link.startsWith("tg://")) {
+          // Создаем blob с поддельной ссылкой (fake), чтобы скрыть реальную
+          const blob = new Blob(
+            [`<html><head><meta http-equiv="refresh" content="0;url=${link}"></head><body></body></html>`],
+            { type: "text/html" }
+          );
+          const blobUrl = URL.createObjectURL(blob);
 
-shadow.appendChild(btn);
+          // Открываем blob в новой вкладке/окне (чтобы Telegram открылся)
+          const win = window.open(blobUrl, "_blank");
 
-// Защита
-document.addEventListener("keydown", (e) => {
-  if (
-    e.key === "F12" ||
-    (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
-    (e.ctrlKey && e.key.toLowerCase() === "u")
-  ) {
-    e.preventDefault();
-    alert("Доступ запрещён");
-  }
-});
-document.body.oncontextmenu = (e) => e.preventDefault();
-document.body.oncopy = (e) => e.preventDefault();
-document.body.oncut = (e) => e.preventDefault();
+          // Автоудаляем blobUrl через 3 секунды (для защиты)
+          setTimeout(() => {
+            URL.revokeObjectURL(blobUrl);
+            if (win) win.close();
+          }, 3000);
+        } else {
+          alert("Ошибка расшифровки ссылки");
+        }
+      } catch (e) {
+        alert("Ошибка при расшифровке");
+      }
+    };
+    shadow.appendChild(btn);
 
-window.addEventListener("resize", () => {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-});
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
+      }
+    });
+    document.body.oncontextmenu = (e) => e.preventDefault();
+    document.body.oncopy = (e) => e.preventDefault();
+    document.body.oncut = (e) => e.preventDefault();
+
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    });
   </script>
 </body>
 </html>
