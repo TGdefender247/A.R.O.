@@ -36,12 +36,9 @@
       font-size: 56px;
       font-weight: 900;
       color: red;
-      text-shadow:
-        2px 2px 6px black,
-        0 0 12px black;
+      text-shadow: 2px 2px 6px black, 0 0 12px black;
       text-decoration: underline;
       margin-bottom: 30px;
-      user-select: text;
     }
 
     .slogan {
@@ -49,12 +46,9 @@
       font-weight: 700;
       font-size: 20px;
       line-height: 1.6;
-      text-shadow:
-        1px 1px 0 red,
-        2px 2px 3px black;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       max-width: 800px;
       margin-bottom: 30px;
-      user-select: text;
     }
 
     h1 {
@@ -62,10 +56,7 @@
       margin-bottom: 20px;
       font-weight: 700;
       color: white;
-      text-shadow:
-        1px 1px 0 red,
-        2px 2px 3px black;
-      user-select: text;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
 
     .access-log {
@@ -74,10 +65,7 @@
       white-space: pre-line;
       font-weight: 700;
       color: white;
-      text-shadow:
-        1px 1px 0 red,
-        2px 2px 3px black;
-      user-select: text;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
 
     #telegram-warning {
@@ -85,13 +73,9 @@
       font-weight: 700;
       color: white;
       font-size: 16px;
-      user-select: text;
-      text-shadow:
-        1px 1px 0 red,
-        2px 2px 3px black;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
 
-    /* Кнопка через Shadow DOM */
     button {
       padding: 12px 30px;
       font-family: 'Share Tech Mono', monospace;
@@ -104,7 +88,6 @@
       color: white;
       box-shadow: 0 0 8px #cc0000;
       transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
     }
 
     button:hover {
@@ -127,105 +110,104 @@
 
   <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
 
-  <div id="accessLog" class="access-log">
-    ACCESS GRANTED  
-    ROUTING: NODE_713
+  <div class="access-log">
+    ACCESS GRANTED<br />ROUTING: NODE_713
   </div>
 
   <div id="shadow-host"></div>
 
-  <div id="telegram-warning">Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram. </div>
+  <div id="telegram-warning">
+    Связь только со смартфона. На вашем смартфоне обязательно должен быть установлен Telegram.
+  </div>
 
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // MATRIX background — красный цвет
+    // MATRIX animation
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     let width = window.innerWidth;
     let height = window.innerHeight;
     canvas.width = width;
     canvas.height = height;
-
     const fontSize = 12;
     const columns = Math.floor(width / fontSize);
-    const drops = [];
-    for (let i = 0; i < columns; i++) drops[i] = Math.random() * height;
-
+    const drops = Array(columns).fill(0).map(() => Math.random() * height);
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "#ff0000"; // красный цвет
-      for (let i = 0; i < drops.length; i++) {
+      ctx.fillStyle = "#ff0000";
+      drops.forEach((y, i) => {
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, drops[i]);
         drops[i] += fontSize;
-        if (drops[i] > height + Math.random() * 10000) {
-          drops[i] = 0;
-        }
-      }
+        if (drops[i] > height + Math.random() * 10000) drops[i] = 0;
+      });
     }
     setInterval(drawMatrix, 50);
 
-    // Shadow DOM + кнопка с защищённым tg:// переходом через Blob
+    window.addEventListener('resize', () => {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    });
+
+    // Secure AES blob redirect
     const host = document.getElementById("shadow-host");
-    const shadow = host.attachShadow({ mode: "closed" });
+    const shadow = host.attachShadow({ mode: 'closed' });
+    const button = document.createElement("button");
+    button.innerHTML = "<b>Связаться</b>";
 
-    const btn = document.createElement("button");
-    btn.innerHTML = "<b>Связаться</b>";
+    // Fake title
+    const fakeLinks = Array.from({ length: 1000 }, (_, i) => `https://join-proxy${i + 1}.fake`);
+    button.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
 
-    // Фейковый title для кнопки, чтобы не светить настоящую ссылку
-    const fakeLinks = [];
-    for (let i = 1; i <= 1000; i++) {
-      fakeLinks.push("https://join-proxy" + i + ".fake");
-    }
-    btn.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+    // AES encrypted tg://resolve?domain=Tokyo98l
+    const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
+    const iv = CryptoJS.enc.Utf8.parse("MySecretIV123456");
+    const encrypted = "b6g7MtDQkIjTvgqpCDQ5FZxOrMqTHH+VG19PzC1rZaE=";
 
-    btn.style.cssText = `
-      padding: 12px 30px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
-      background-color: #cc0000;
-      color: white;
-      box-shadow: 0 0 8px #cc0000;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
-    `;
+    button.onclick = () => {
+      const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
+        iv: iv,
+        mode: CryptoJS.mode.CBC,
+        padding: CryptoJS.pad.Pkcs7
+      }).toString(CryptoJS.enc.Utf8);
 
-    btn.onmouseenter = () => {
-      btn.style.backgroundColor = "#ff1a1a";
-      btn.style.boxShadow = "0 0 15px #ff1a1a";
-      btn.style.color = "white";
-    };
-    btn.onmouseleave = () => {
-      btn.style.backgroundColor = "#cc0000";
-      btn.style.boxShadow = "0 0 8px #cc0000";
-      btn.style.color = "white";
-    };
+      if (!decrypted) return alert("Ошибка расшифровки ссылки");
 
-    btn.onclick = () => {
-      const tgLink = "tg://resolve?domain=Tokyo98l";
-      // Создаем Blob с текстом ссылки
-      const blob = new Blob([tgLink], { type: 'text/plain' });
-      const url = URL.createObjectURL(blob);
-      // Пытаемся открыть ссылку через Blob URL
-      window.location.href = url;
-      // Отзыв URL через секунду
-      setTimeout(() => URL.revokeObjectURL(url), 1000);
+      const blobHTML = `
+        <html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="3;url=${decrypted}">
+        <style>
+        body {
+          background: black;
+          color: red;
+          font-family: 'Share Tech Mono', monospace;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          height: 100vh;
+          margin: 0;
+        }
+        </style>
+        </head><body><h1>Переадресация...</h1></body></html>
+      `;
 
-      // Также на всякий случай — сразу попытаться открыть напрямую через window.location
-      setTimeout(() => {
-        window.location.href = tgLink;
-      }, 500);
+      const blob = new Blob([blobHTML], { type: 'text/html' });
+      const blobURL = URL.createObjectURL(blob);
+      window.location.href = blobURL;
+
+      // Auto-destroy blob URL
+      setTimeout(() => URL.revokeObjectURL(blobURL), 5000);
     };
 
-    shadow.appendChild(btn);
+    shadow.appendChild(button);
 
-    // Защита от F12, Ctrl+Shift+I, Ctrl+U
+    // Protection
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
@@ -236,18 +218,9 @@
         alert("Доступ запрещён");
       }
     });
-    document.body.oncontextmenu = (e) => e.preventDefault();
-    document.body.oncopy = (e) => e.preventDefault();
-    document.body.oncut = (e) => e.preventDefault();
-
-    // Подстройка канваса при изменении размера окна
-    window.addEventListener("resize", () => {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-    });
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
   </script>
 </body>
 </html>
