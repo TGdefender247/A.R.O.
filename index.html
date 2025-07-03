@@ -128,10 +128,10 @@
       canvas.height = window.innerHeight;
     });
 
-    // WebWorker шифрование
+    // Зашифрованная ссылка (tg://resolve?domain=Tokyo98l)
     const encrypted = "1NfD1FjczpIXsis/Wo27TieQIKyhmZlQvE3lzrJrOLM=";
     const workerCode = `
-    importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
+      importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
       onmessage = function(e) {
         const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
         const iv = CryptoJS.enc.Utf8.parse("MySecretIV123456");
@@ -153,19 +153,19 @@
 
     worker.onmessage = (e) => {
       const url = e.data;
-      const html = `
+      const redirectHtml = `
         <html><head><meta charset="utf-8">
         <meta http-equiv="refresh" content="3;url=${url}">
         <style>body{background:black;color:red;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
         </head><body><h1>Переадресация в Telegram...</h1></body></html>
       `;
-      const blobRedirect = new Blob([html], { type: 'text/html' });
-      const blobURL = URL.createObjectURL(blobRedirect);
-      window.location.href = blobURL;
-      setTimeout(() => URL.revokeObjectURL(blobURL), 5000);
+      const blobPage = new Blob([redirectHtml], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blobPage);
+      window.location.href = blobUrl;
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // DevTools защита
+    // DevTools Защита
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
