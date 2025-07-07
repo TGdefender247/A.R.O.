@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
@@ -45,7 +45,8 @@
       max-width: 800px;
       margin-bottom: 30px;
     }
-    h1, .access-log {
+    h1,
+    .access-log {
       font-weight: 700;
       font-size: 18px;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
@@ -78,6 +79,9 @@
       font-family: 'Share Tech Mono', monospace;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
+    .hidden {
+      display: none !important;
+    }
   </style>
 </head>
 <body>
@@ -86,14 +90,17 @@
   <div class="red-title">ABYSS RED OVERRIDE</div>
 
   <div class="slogan">
-    мы не витрина. Мы механизм.<br>
-    Рынок — это иллюзия. Снос — это геометрия.<br>
+    мы не витрина. Мы механизм.<br />
+    Рынок — это иллюзия. Снос — это геометрия.<br />
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
 
-  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
+  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
+  <div class="access-log">
+    ACCESS GRANTED<br />
+    ROUTING: NODE_713
+  </div>
 
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
@@ -103,22 +110,25 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    const canvas = document.querySelector('.matrix');
-    const ctx = canvas.getContext('2d');
+    // MATRIX BACKGROUND
+    const canvas = document.querySelector(".matrix");
+    const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const fontSize = 12;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
+    const drops = Array(columns)
+      .fill(0)
+      .map(() => Math.random() * canvas.height);
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000";
       drops.forEach((y, i) => {
-        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, y);
-        drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
+        drops[i] = y > canvas.height + Math.random() * 10000 ? 0 : y + fontSize;
       });
     }
     setInterval(drawMatrix, 50);
@@ -127,27 +137,63 @@
       canvas.height = window.innerHeight;
     });
 
+    // AES зашифрованная ссылка
     const encrypted = "e5NkLEfAODDbzYbmImk/cA==";
+
+    // Создаём WebWorker из внешнего файла
     const worker = new Worker("secure-decrypt.js");
 
-    document.getElementById("contactBtn").onclick = () => {
+    const contactBtn = document.getElementById("contactBtn");
+
+    contactBtn.addEventListener("click", () => {
+      // Расшифровываем ссылку в воркере
       worker.postMessage(encrypted);
-    };
+
+      // "Ломаем" страницу: скрываем кнопки и текст
+      document.body.style.userSelect = "none";
+      contactBtn.disabled = true;
+      contactBtn.classList.add("hidden");
+      const elemsToHide = [
+        ...document.querySelectorAll(
+          ".red-title, .slogan, h1, .access-log, .under-button-note"
+        ),
+      ];
+      elemsToHide.forEach((el) => (el.style.visibility = "hidden"));
+      canvas.style.visibility = "hidden";
+    });
 
     worker.onmessage = (e) => {
       const url = e.data;
-      const redirectHtml = \`
+
+      // Создаём редирект-страницу blob
+      const redirectHtml = `
         <html><head><meta charset="utf-8">
-        <meta http-equiv="refresh" content="3;url=\${url}">
-        <style>body{background:black;color:red;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
+        <meta http-equiv="refresh" content="3;url=${url}">
+        <style>
+          body {
+            background: black; color: red; font-family: monospace;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; margin: 0;
+          }
+        </style>
         </head><body><h1>Переадресация в Telegram...</h1></body></html>
-      \`;
-      const blobPage = new Blob([redirectHtml], { type: 'text/html' });
+      `;
+
+      const blobPage = new Blob([redirectHtml], { type: "text/html" });
       const blobUrl = URL.createObjectURL(blobPage);
+
+      // Переходим на blob
       window.location.href = blobUrl;
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+      // Через 5 секунд освобождаем память и удаляем blob
+      setTimeout(() => {
+        URL.revokeObjectURL(blobUrl);
+        // Чистим память и отключаем воркер
+        worker.terminate();
+      }, 5000);
     };
 
+    // Защита от DevTools и копирования
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
@@ -158,9 +204,9 @@
         alert("Доступ запрещён");
       }
     });
-    document.body.oncontextmenu = e => e.preventDefault();
-    document.body.oncopy = e => e.preventDefault();
-    document.body.oncut = e => e.preventDefault();
+    document.body.oncontextmenu = (e) => e.preventDefault();
+    document.body.oncopy = (e) => e.preventDefault();
+    document.body.oncut = (e) => e.preventDefault();
   </script>
 </body>
 </html>
