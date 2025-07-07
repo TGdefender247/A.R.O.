@@ -80,7 +80,6 @@
       font-family: 'Share Tech Mono', monospace;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
-    .hidden { display: none !important; }
   </style>
 </head>
 <body>
@@ -106,7 +105,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // Matrix background
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = innerWidth;
@@ -131,61 +129,42 @@
       canvas.height = innerHeight;
     });
 
-    // Зашифрованная ссылка (tg://resolve?domain=OxdSJtTTiGc0OTcx)
-    const encrypted = "e5NkLEfAODDbzYbmImk/cA==";
+    const encrypted = "e5NkLEfAODDbzYbmImk/cA=="; // Зашифрованная tg://resolve?domain=OxdSJtTTiGc0OTcx
     const worker = new Worker("secure-decrypt.js");
     const link = document.getElementById("contactLink");
 
-    link.addEventListener("click", (e) => {
+    link.addEventListener("click", function(e) {
       e.preventDefault();
       worker.postMessage(encrypted);
     });
 
-    worker.onmessage = (e) => {
+    worker.onmessage = function(e) {
       const url = e.data;
 
-      const blobContent = `
-        <html><head><meta charset="utf-8">
-        <style>
-          body {
-            background: black; color: red; font-family: monospace;
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; margin: 0;
-          }
-        </style></head>
-        <body>
-          <h1>Переход в Telegram...</h1>
-          <iframe src="${url}" style="display:none;"></iframe>
-          <script>
-            setTimeout(function() {
-              location.href = "${url}";
-            }, 1500);
-          <\/script>
-        </body></html>
-      `.trim();
+      // Пытаемся открыть Telegram 3 способами:
+      const a = document.createElement("a");
+      a.href = url;
+      a.style.display = "none";
+      document.body.appendChild(a);
+      a.click();
 
-      const blob = new Blob([blobContent], { type: "text/html" });
-      const blobUrl = URL.createObjectURL(blob);
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.src = url;
+      document.body.appendChild(iframe);
 
-      // Переход на blob
-      location.href = blobUrl;
-
-      // Через 4 секунды удаляем blob и очищаем страницу
       setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        worker.terminate();
+        location.href = url;
+      }, 1000);
 
-        try {
-          document.body.innerHTML = "";
-          document.body.style.background = "black";
-        } catch (err) {
-          // ignore
-        }
-      }, 4000);
+      setTimeout(() => {
+        document.body.innerHTML = "";
+        document.body.style.background = "black";
+        worker.terminate();
+      }, 3000);
     };
 
-    // Защита от DevTools и копирования
-    document.addEventListener("keydown", (e) => {
+    document.addEventListener("keydown", e => {
       if (
         e.key === "F12" ||
         (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
@@ -195,9 +174,9 @@
         alert("Доступ запрещён");
       }
     });
-    document.body.oncontextmenu = (e) => e.preventDefault();
-    document.body.oncopy = (e) => e.preventDefault();
-    document.body.oncut = (e) => e.preventDefault();
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
   </script>
 </body>
 </html>
