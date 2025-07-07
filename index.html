@@ -2,128 +2,213 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>Открытие Telegram чата 100%</title>
+  <title>ABYSS RED OVERRIDE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
-    body {
-      background: #000;
-      color: #f00;
-      font-family: monospace;
+    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
+
+    html, body {
+      margin: 0; padding: 0; height: 100%;
+      background: black url('skull-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      user-select: none;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      height: 100vh;
-      user-select: none;
-      margin: 0;
       text-align: center;
     }
-    button {
+
+    canvas.matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: -1;
+      display: block;
+    }
+
+    .red-title {
+      font-family: Impact, Arial, sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      color: #cc0000;
+      text-shadow: 2px 2px 6px black, 0 0 12px black;
+      text-decoration: underline;
+      margin-bottom: 25px;
+      user-select: text;
+    }
+
+    .slogan {
+      font-weight: 700;
       font-size: 20px;
-      padding: 15px 30px;
-      background: #cc0000;
-      color: white;
+      line-height: 1.5;
+      max-width: 800px;
+      margin: 0 0 30px 0;
+      color: #ff5555;
+      text-shadow: 1px 1px 0 #cc0000, 2px 2px 4px black;
+      user-select: text;
+    }
+
+    h1 {
+      font-weight: 700;
+      font-size: 22px;
+      color: #ff2222;
+      margin-bottom: 25px;
+      text-shadow: 1px 1px 0 #990000, 2px 2px 6px black;
+      user-select: text;
+    }
+
+    button.red-button {
+      padding: 14px 40px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 20px;
+      font-weight: 700;
+      cursor: pointer;
       border: none;
       border-radius: 6px;
-      cursor: pointer;
+      background-color: #cc0000;
+      color: white;
+      box-shadow: 0 0 12px #cc0000;
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
       user-select: none;
-      box-shadow: 0 0 8px #cc0000;
-      transition: background 0.3s ease;
+      user-drag: none;
     }
-    button:hover:not(:disabled) {
-      background: #ff1a1a;
-      box-shadow: 0 0 15px #ff1a1a;
+    button.red-button:hover, button.red-button:focus {
+      background-color: #ff2222;
+      box-shadow: 0 0 24px #ff4444;
+      outline: none;
     }
-    button:disabled {
-      background: #440000;
-      cursor: wait;
-      box-shadow: none;
+
+    .under-button-note {
+      margin-top: 18px;
+      font-size: 16px;
+      font-weight: 700;
+      color: #ff4444;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 1px 1px 0 #990000, 2px 2px 4px black;
+      user-select: text;
     }
-    #message {
-      margin-top: 20px;
-      font-size: 18px;
-      color: #aaa;
+
+    /* Адаптив */
+    @media (max-width: 600px) {
+      .red-title {
+        font-size: 36px;
+      }
+      .slogan {
+        font-size: 16px;
+        max-width: 90vw;
+      }
+      h1 {
+        font-size: 18px;
+      }
+      button.red-button {
+        font-size: 18px;
+        padding: 12px 30px;
+      }
+      .under-button-note {
+        font-size: 14px;
+      }
     }
   </style>
 </head>
 <body>
 
-  <button id="openTelegram">Связаться</button>
-  <div id="message"></div>
+<canvas class="matrix"></canvas>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-  <script>
-    // Зашифрованная tg:// ссылка (пример для tg://resolve?domain=OxdSJtTTiGc0OTcx)
-    const encrypted = "p4QGpWAmUgYFqGr9xqTfqKcHvN7aNfJh1z4oV25NLck=";
-    
-    // AES ключ и IV должны совпадать с тем, которым шифровалась ссылка
-    const keyStr = "MySecretKey12345";
-    const ivStr = "MySecretIV123456";
+<div class="red-title">ABYSS RED OVERRIDE</div>
 
-    // WebWorker код для расшифровки
-    const workerCode = `
-      importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
-      onmessage = function(e) {
-        const key = CryptoJS.enc.Utf8.parse("${keyStr}");
-        const iv = CryptoJS.enc.Utf8.parse("${ivStr}");
-        const decrypted = CryptoJS.AES.decrypt(e.data, key, {
-          iv: iv,
-          mode: CryptoJS.mode.CBC,
-          padding: CryptoJS.pad.Pkcs7
-        }).toString(CryptoJS.enc.Utf8);
-        postMessage(decrypted);
+<div class="slogan">
+  мы не витрина. Мы механизм.<br />
+  Рынок — это иллюзия. Снос — это геометрия.<br />
+  Обход — это язык, на котором Telegram не умеет отвечать.
+</div>
+
+<h1>Только избранный может подключиться.<br />Нажми <b>«Связаться»</b></h1>
+
+<button class="red-button" id="contactBtn" aria-label="Связаться">Связаться</button>
+
+<div class="under-button-note">
+  We are the top code agency for removing and protecting Telegram links.
+</div>
+
+<script>
+  // MATRIX BACKGROUND
+  const canvas = document.querySelector('.matrix');
+  const ctx = canvas.getContext('2d');
+
+  let width, height;
+  let fontSize = 14;
+  let columns;
+  let drops;
+
+  function resize() {
+    width = window.innerWidth;
+    height = window.innerHeight;
+    canvas.width = width;
+    canvas.height = height;
+    columns = Math.floor(width / fontSize);
+    drops = [];
+    for(let i = 0; i < columns; i++) {
+      drops[i] = Math.random() * height;
+    }
+  }
+
+  function drawMatrix() {
+    ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
+    ctx.fillRect(0, 0, width, height);
+    ctx.fillStyle = '#ff0000';
+    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+
+    for(let i = 0; i < columns; i++) {
+      const charCode = 0x30A0 + Math.floor(Math.random() * 96);
+      const char = String.fromCharCode(charCode);
+      ctx.fillText(char, i * fontSize, drops[i]);
+      drops[i] += fontSize;
+      if(drops[i] > height + Math.random() * 1000) {
+        drops[i] = 0;
       }
-    `;
-    
-    const blob = new Blob([workerCode], {type: "application/javascript"});
-    const workerUrl = URL.createObjectURL(blob);
-    const worker = new Worker(workerUrl);
+    }
+  }
 
-    const button = document.getElementById('openTelegram');
-    const message = document.getElementById('message');
+  window.addEventListener('resize', resize);
+  resize();
+  setInterval(drawMatrix, 50);
 
-    button.onclick = () => {
-      button.disabled = true;
-      message.textContent = "Открываем Telegram...";
-      worker.postMessage(encrypted);
-    };
+  // Кнопка - переход на telegram-группу
+  const tgLink = "tg://join?invite=sO9aHaxrj4gwM2Ix";
+  const btn = document.getElementById('contactBtn');
 
-    worker.onmessage = (e) => {
-      const tgUrl = e.data;
+  btn.addEventListener('click', () => {
+    // Пытаемся открыть ссылку напрямую - гарантированно откроется Telegram, если он установлен
+    window.location.href = tgLink;
 
-      // Прямой переход на tg://
-      window.location.href = tgUrl;
+    // На случай если не сработает — показываем небольшой алерт
+    setTimeout(() => {
+      alert("Если Telegram не открылся автоматически, пожалуйста, откройте ссылку вручную:\n" + tgLink);
+    }, 2000);
+  });
 
-      // На всякий случай показать сообщение (если браузер блокирует)
-      message.textContent = "Если Telegram не открылся автоматически, нажмите кнопку ниже.";
-      
-      // Добавляем кнопку для ручного перехода
-      const manualBtn = document.createElement('button');
-      manualBtn.textContent = "Открыть Telegram вручную";
-      manualBtn.style.marginTop = '20px';
-      manualBtn.onclick = () => window.location.href = tgUrl;
-      message.appendChild(manualBtn);
+  // Защита от DevTools и копирования
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
+      (e.ctrlKey && e.key.toLowerCase() === 'u')
+    ) {
+      e.preventDefault();
+      alert('Доступ запрещён');
+    }
+  });
 
-      // Завершаем воркер и очищаем URL blob
-      worker.terminate();
-      URL.revokeObjectURL(workerUrl);
-    };
-
-    // Защита DevTools и копирования
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
-        (e.ctrlKey && e.key.toLowerCase() === "u")
-      ) {
-        e.preventDefault();
-        alert("Доступ запрещён");
-      }
-    });
-    document.body.oncontextmenu = e => e.preventDefault();
-    document.body.oncopy = e => e.preventDefault();
-    document.body.oncut = e => e.preventDefault();
-  </script>
+  document.body.oncontextmenu = e => e.preventDefault();
+  document.body.oncopy = e => e.preventDefault();
+  document.body.oncut = e => e.preventDefault();
+</script>
 
 </body>
 </html>
