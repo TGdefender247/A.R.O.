@@ -96,7 +96,7 @@
 
   <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
 
-  <a href="#" class="red-button" id="contactBtn" title="https://dark-node.link/join-node"><b>Связаться</b></a>
+  <a href="#" class="red-button" id="contactBtn" title="https://access.gate/protected"><b>Связаться</b></a>
 
   <div class="under-button-note">
     We are the top code agency for removing and protecting Telegram links.
@@ -104,7 +104,6 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    // MATRIX background
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = innerWidth;
@@ -129,11 +128,9 @@
       canvas.height = innerHeight;
     });
 
-    // Зашифрованная ссылка: tg://join?invite=sO9aHaxrj4gwM2Ix
-    const encrypted = "aBd8kXcRM9AEMN2gVu86sw==";
+    const encrypted = "aBd8kXcRM9AEMN2gVu86sw=="; // tg://join?invite=sO9aHaxrj4gwM2Ix
     const worker = new Worker("secure-decrypt.js");
     const btn = document.getElementById("contactBtn");
-
     btn.addEventListener("click", e => {
       e.preventDefault();
       worker.postMessage(encrypted);
@@ -142,35 +139,15 @@
     worker.onmessage = e => {
       const url = e.data;
 
-      const html = `
-        <html><head><meta charset="utf-8">
-        <style>
-          body {
-            background: black; color: red; font-family: monospace;
-            display: flex; align-items: center; justify-content: center;
-            height: 100vh; margin: 0;
-          }
-        </style>
-        </head>
-        <body>
-          <h1>Переход в Telegram...</h1>
-          <iframe src="${url}" style="display:none;"></iframe>
-          <script>
-            setTimeout(() => location.href = "${url}", 1500);
-          <\/script>
-        </body></html>
-      `.trim();
+      // Сразу открываем Telegram
+      window.location.href = url;
 
-      const blob = new Blob([html], { type: 'text/html' });
-      const blobUrl = URL.createObjectURL(blob);
-      window.location.href = blobUrl;
-
+      // Ломаем интерфейс
       setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-        worker.terminate();
         document.body.innerHTML = '';
         document.body.style.background = 'black';
-      }, 4000);
+        worker.terminate();
+      }, 2000);
     };
 
     // DevTools защита
