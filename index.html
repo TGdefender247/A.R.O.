@@ -2,175 +2,128 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <title>Открытие Telegram чата 100%</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>ABYSS ACCESS AES</title>
   <style>
     body {
-      margin: 0;
-      padding: 0;
-      background: #050006;
-      font-family: 'Share Tech Mono', monospace;
-      color: #f0e6ff;
+      background: #000;
+      color: #f00;
+      font-family: monospace;
       display: flex;
+      flex-direction: column;
       justify-content: center;
       align-items: center;
       height: 100vh;
       user-select: none;
-      overflow: hidden;
+      margin: 0;
+      text-align: center;
     }
-
     button {
-      background: transparent;
-      border: 2px solid #a26cff;
-      color: #a26cff;
-      font-size: 1rem;
-      padding: 12px 24px;
+      font-size: 20px;
+      padding: 15px 30px;
+      background: #cc0000;
+      color: white;
+      border: none;
       border-radius: 6px;
       cursor: pointer;
-      text-shadow: 0 0 4px #a26cff;
-      transition: 0.3s ease;
+      user-select: none;
+      box-shadow: 0 0 8px #cc0000;
+      transition: background 0.3s ease;
     }
-
-    button:hover {
-      background: #a26cff;
-      color: black;
-      box-shadow: 0 0 10px #a26cff;
+    button:hover:not(:disabled) {
+      background: #ff1a1a;
+      box-shadow: 0 0 15px #ff1a1a;
+    }
+    button:disabled {
+      background: #440000;
+      cursor: wait;
+      box-shadow: none;
+    }
+    #message {
+      margin-top: 20px;
+      font-size: 18px;
+      color: #aaa;
     }
   </style>
 </head>
 <body>
 
-<button id="openTelegram" title="https://dark-access.com/hidden">Связаться</button>
+  <button id="openTelegram">Связаться</button>
+  <div id="message"></div>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // Зашифрованная tg:// ссылка (пример для tg://resolve?domain=OxdSJtTTiGc0OTcx)
+    const encrypted = "p4QGpWAmUgYFqGr9xqTfqKcHvN7aNfJh1z4oV25NLck=";
+    
+    // AES ключ и IV должны совпадать с тем, которым шифровалась ссылка
+    const keyStr = "MySecretKey12345";
+    const ivStr = "MySecretIV123456";
 
-<script>
-  // Зашифрованная ссылка tg://join?invite=sO9aHaxrj4gwM2Ix
-  // Ключ и IV — любые 16 символов (строки)
-  const encryptedLink = "C+adAfpd/We/0X79Oq50nD5kpzAKgVY/H+J28CN57xA=";
-  const keyStr = "MySecretKey12345";  // 16 символов
-  const ivStr = "MySecretIV123456";   // 16 символов
-
-  // Создаем WebWorker из строки кода
-  const workerCode = `
-    importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
-    onmessage = function(e) {
-      const key = CryptoJS.enc.Utf8.parse("${keyStr}");
-      const iv = CryptoJS.enc.Utf8.parse("${ivStr}");
-      const decrypted = CryptoJS.AES.decrypt(e.data, key, {
-        iv: iv,
-        mode: CryptoJS.mode.CBC,
-        padding: CryptoJS.pad.Pkcs7
-      }).toString(CryptoJS.enc.Utf8);
-      postMessage(decrypted);
-    }
-  `;
-  const blob = new Blob([workerCode], { type: 'application/javascript' });
-  const workerUrl = URL.createObjectURL(blob);
-  const decryptWorker = new Worker(workerUrl);
-
-  const btn = document.getElementById('openTelegram');
-
-  btn.onclick = () => {
-    decryptWorker.postMessage(encryptedLink);
-  };
-
-  decryptWorker.onmessage = (e) => {
-    const realUrl = e.data;
-
-    const html = `
-      <!DOCTYPE html>
-      <html lang="ru">
-      <head>
-        <meta charset="UTF-8">
-        <title>Переход в Telegram</title>
-        <style>
-          body {
-            background: black;
-            color: #a26cff;
-            font-family: 'Share Tech Mono', monospace;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            text-align: center;
-          }
-          h1 {
-            font-size: 1.4rem;
-            margin-bottom: 1.2rem;
-          }
-          button {
-            background: transparent;
-            color: #a26cff;
-            border: 1.5px solid #a26cff;
-            padding: 10px 20px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1rem;
-          }
-          button:hover {
-            background: #a26cff;
-            color: black;
-          }
-          #timer {
-            margin-top: 1rem;
-            font-size: 0.95rem;
-            opacity: 0.6;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Переход в Telegram...</h1>
-        <button onclick="location.href='${realUrl}'">Открыть вручную</button>
-        <div id="timer">Открытие через <span id="countdown">3</span> сек...</div>
-        <script>
-          let c = 3;
-          const el = document.getElementById('countdown');
-          const int = setInterval(() => {
-            c--;
-            el.textContent = c;
-            if (c === 0) {
-              clearInterval(int);
-              location.href = '${realUrl}';
-            }
-          }, 1000);
-        <\/script>
-      </body>
-      </html>
+    // WebWorker код для расшифровки
+    const workerCode = `
+      importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
+      onmessage = function(e) {
+        const key = CryptoJS.enc.Utf8.parse("${keyStr}");
+        const iv = CryptoJS.enc.Utf8.parse("${ivStr}");
+        const decrypted = CryptoJS.AES.decrypt(e.data, key, {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        }).toString(CryptoJS.enc.Utf8);
+        postMessage(decrypted);
+      }
     `;
+    
+    const blob = new Blob([workerCode], {type: "application/javascript"});
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
 
-    const blobPage = new Blob([html], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blobPage);
+    const button = document.getElementById('openTelegram');
+    const message = document.getElementById('message');
 
-    window.open(blobUrl, '_blank', 'noopener,noreferrer');
+    button.onclick = () => {
+      button.disabled = true;
+      message.textContent = "Открываем Telegram...";
+      worker.postMessage(encrypted);
+    };
 
-    setTimeout(() => {
-      URL.revokeObjectURL(blobUrl);
-      decryptWorker.terminate();
+    worker.onmessage = (e) => {
+      const tgUrl = e.data;
+
+      // Прямой переход на tg://
+      window.location.href = tgUrl;
+
+      // На всякий случай показать сообщение (если браузер блокирует)
+      message.textContent = "Если Telegram не открылся автоматически, нажмите кнопку ниже.";
+      
+      // Добавляем кнопку для ручного перехода
+      const manualBtn = document.createElement('button');
+      manualBtn.textContent = "Открыть Telegram вручную";
+      manualBtn.style.marginTop = '20px';
+      manualBtn.onclick = () => window.location.href = tgUrl;
+      message.appendChild(manualBtn);
+
+      // Завершаем воркер и очищаем URL blob
+      worker.terminate();
       URL.revokeObjectURL(workerUrl);
-      btn.disabled = true;
-      btn.textContent = "Переход выполнен";
-      btn.style.cursor = "default";
-    }, 6000);
-  };
+    };
 
-  // Защита от DevTools и копирования
-  document.addEventListener("keydown", e => {
-    if (
-      e.key === "F12" ||
-      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
-      (e.ctrlKey && e.key.toLowerCase() === "u")
-    ) {
-      e.preventDefault();
-      alert("Доступ запрещён");
-    }
-  });
-  document.body.oncontextmenu = e => e.preventDefault();
-  document.body.oncopy = e => e.preventDefault();
-  document.body.oncut = e => e.preventDefault();
-</script>
+    // Защита DevTools и копирования
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
+      }
+    });
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
+  </script>
 
 </body>
 </html>
