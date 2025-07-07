@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
@@ -89,16 +89,16 @@
   <div class="red-title">ABYSS RED OVERRIDE</div>
 
   <div class="slogan">
-    мы не витрина. Мы механизм.<br>
-    Рынок — иллюзия. Снос — геометрия.<br>
+    мы не витрина. Мы механизм.<br />
+    Рынок — иллюзия. Снос — геометрия.<br />
     Telegram не умеет отвечать.
   </div>
 
   <h1>Только избранный может подключиться. Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
+  <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
 
-  <a href="https://dark-network.io/join/private-node" class="red-button" id="contactLink"><b>Связаться</b></a>
+  <a href="https://dark-network.io/join/private-node" class="red-button" id="contactLink" title="https://dark-network.io/join/private-node"><b>Связаться</b></a>
 
   <div class="under-button-note">
     We are the top code agency for removing and protecting Telegram links.
@@ -131,8 +131,8 @@
       canvas.height = innerHeight;
     });
 
-    // Secure Telegram redirect
-    const encrypted = "e5NkLEfAODDbzYbmImk/cA=="; // tg://resolve?domain=OxdSJtTTiGc0OTcx (пример)
+    // Зашифрованная ссылка (tg://resolve?domain=OxdSJtTTiGc0OTcx)
+    const encrypted = "e5NkLEfAODDbzYbmImk/cA==";
     const worker = new Worker("secure-decrypt.js");
     const link = document.getElementById("contactLink");
 
@@ -143,9 +143,9 @@
 
     worker.onmessage = (e) => {
       const url = e.data;
-      const html = `
+
+      const blobContent = `
         <html><head><meta charset="utf-8">
-        <meta http-equiv="refresh" content="3;url=${url}">
         <style>
           body {
             background: black; color: red; font-family: monospace;
@@ -153,36 +153,51 @@
             height: 100vh; margin: 0;
           }
         </style></head>
-        <body><h1>Переход в Telegram...</h1></body></html>
-      `;
-      const blob = new Blob([html], { type: 'text/html' });
-      const blobUrl = URL.createObjectURL(blob);
-      window.location.href = blobUrl;
+        <body>
+          <h1>Переход в Telegram...</h1>
+          <iframe src="${url}" style="display:none;"></iframe>
+          <script>
+            setTimeout(function() {
+              location.href = "${url}";
+            }, 1500);
+          <\/script>
+        </body></html>
+      `.trim();
 
+      const blob = new Blob([blobContent], { type: "text/html" });
+      const blobUrl = URL.createObjectURL(blob);
+
+      // Переход на blob
+      location.href = blobUrl;
+
+      // Через 4 секунды удаляем blob и очищаем страницу
       setTimeout(() => {
         URL.revokeObjectURL(blobUrl);
         worker.terminate();
-      }, 6000);
 
-      // Ломаем страницу
-      document.body.style.pointerEvents = "none";
-      document.body.style.userSelect = "none";
-      link.style.visibility = "hidden";
-      document.querySelectorAll(".red-title, .slogan, h1, .access-log, .under-button-note, canvas.matrix").forEach(el => {
-        el.style.visibility = "hidden";
-      });
+        try {
+          document.body.innerHTML = "";
+          document.body.style.background = "black";
+        } catch (err) {
+          // ignore
+        }
+      }, 4000);
     };
 
-    // DevTools и контекст-меню защита
-    document.addEventListener("keydown", e => {
-      if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")  (e.ctrlKey && e.key.toLowerCase() === "u")) {
+    // Защита от DevTools и копирования
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
         e.preventDefault();
         alert("Доступ запрещён");
       }
     });
-    document.body.oncontextmenu = e => e.preventDefault();
-    document.body.oncopy = e => e.preventDefault();
-    document.body.oncut = e => e.preventDefault();
+    document.body.oncontextmenu = (e) => e.preventDefault();
+    document.body.oncopy = (e) => e.preventDefault();
+    document.body.oncut = (e) => e.preventDefault();
   </script>
 </body>
 </html>
