@@ -21,6 +21,16 @@
       justify-content: center;
       align-items: center;
       text-align: center;
+      position: relative;
+    }
+
+    /* Тёмный полупрозрачный слой для контраста текста */
+    body::before {
+      content: "";
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: rgba(0, 0, 0, 0.7);
+      z-index: -1;
     }
 
     canvas.matrix {
@@ -28,7 +38,7 @@
       top: 0; left: 0;
       width: 100vw;
       height: 100vh;
-      z-index: -1;
+      z-index: -2;
       display: block;
     }
 
@@ -173,7 +183,8 @@
 
 <div class="slogan">
   мы не витрина. Мы механизм.<br />
-  Рынок — это иллюзия. Снос — это геометрия.<br />Обход — это язык, на котором Telegram не умеет отвечать.
+  Рынок — это иллюзия. Снос — это геометрия.<br />
+  Обход — это язык, на котором Telegram не умеет отвечать.
 </div>
 
 <h1>Только избранный может подключиться.<br />Нажми <b>«Связаться»</b></h1>
@@ -191,7 +202,7 @@
   const ctx = canvas.getContext('2d');
 
   let width, height;
-  let fontSize = 14;
+  const fontSize = 14;
   let columns;
   let drops;
 
@@ -228,20 +239,13 @@
   resize();
   setInterval(drawMatrix, 50);
 
-  // Шифруем настоящую ссылку AES, чтобы её не было видно в коде
-  // Ключ и IV (должны быть 16 байт)
-  const AES_KEY = "MySecretKey12345";  // 16 chars
-  const AES_IV = "MySecretIV123456";  // 16 chars
+  // AES ключ и IV
+  const AES_KEY = "MySecretKey12345";
+  const AES_IV = "MySecretIV123456";
 
-  // Настоящая Telegram-ссылка:
-  const realLink = "tg://join?invite=sO9aHaxrj4gwM2Ix";
-
-  // Шифрование ссылки для хранения (предварительно сделано, сюда вставляю зашифрованный Base64)
-  // Пример, как зашифровать саму строку - отдельно (сделал заранее):
-  // CryptoJS.AES.encrypt(realLink, CryptoJS.enc.Utf8.parse(AES_KEY), { iv: CryptoJS.enc.Utf8.parse(AES_IV), mode: CryptoJS.mode.CBC, padding: CryptoJS.pad.Pkcs7 }).toString()
+  // Зашифрованная ссылка tg://join?invite=sO9aHaxrj4gwM2Ix
   const encryptedLink = "CjFMYL3BYv0XuQ7+olxMYqI0bbcg/23Oe5P06+63plU=";
 
-  // Фейковые адреса для подсказки при наведении
   const fakeUrls = [
     "https://loading.secure.node",
     "https://proxy1.fake.net",
@@ -253,7 +257,6 @@
     "https://hidden.network/entry"
   ];
 
-  // Периодически меняем подсказку фейкового URL
   const btn = document.getElementById('contactBtn');
   function changeFakeUrl() {
     const fake = fakeUrls[Math.floor(Math.random() * fakeUrls.length)];
@@ -262,7 +265,7 @@
   changeFakeUrl();
   setInterval(changeFakeUrl, 2500);
 
-  // Создаём blob-страницу с задержкой и автоматическим редиректом
+  // Создаём blob с редиректом и таймером
   function openBlobRedirect(url) {
     const redirectHtml = `
       <!DOCTYPE html>
@@ -313,7 +316,7 @@
     setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
   }
 
-  // Расшифровка AES (в браузере)
+  // Расшифровка AES ссылки
   function decryptLink(encrypted) {
     const key = CryptoJS.enc.Utf8.parse(AES_KEY);
     const iv = CryptoJS.enc.Utf8.parse(AES_IV);
@@ -328,6 +331,7 @@
   btn.addEventListener('click', () => {
     try {
       const decryptedUrl = decryptLink(encryptedLink);
+      if(!decryptedUrl || !decryptedUrl.startsWith('tg://')) throw new Error('Некорректная ссылка');
       openBlobRedirect(decryptedUrl);
     } catch (err) {
       alert('Ошибка перехода, попробуйте вручную: tg://join?invite=sO9aHaxrj4gwM2Ix');
