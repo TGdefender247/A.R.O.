@@ -118,7 +118,7 @@
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#ff0000";
       for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(33 + Math.random() * 94); // от ! до ~
+        const text = String.fromCharCode(33 + Math.random() * 94);
         ctx.fillText(text, i * fontSize, drops[i] * fontSize);
         if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
           drops[i] = 0;
@@ -143,19 +143,32 @@
 
     worker.onmessage = (e) => {
       const url = e.data;
-      const redirectHtml = \`
-        <html><head><meta charset="utf-8">
-        <meta http-equiv="refresh" content="3;url=\${url}">
-        <style>body{background:black;color:red;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
-        </head><body><h1>Переадресация в Telegram...</h1></body></html>
-      \`;
+      const redirectHtml = `
+        <html>
+        <head><meta charset="UTF-8">
+        <title>Redirecting...</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <style>
+          body { background:black; color:red; font-family:monospace; display:flex; align-items:center; justify-content:center; flex-direction:column; height:100vh; margin:0; text-align:center; }
+          a { color:red; font-weight:bold; font-size:18px; margin-top:20px; text-decoration:underline; }
+        </style>
+        </head>
+        <body>
+          <h1>Переход в Telegram...</h1>
+          <a href="${url}">Если не открылось автоматически — нажми сюда</a>
+          <script>
+            setTimeout(() => { window.location.href = "${url}"; }, 3000);
+          </script>
+        </body>
+        </html>
+      `;
       const blobPage = new Blob([redirectHtml], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blobPage);
       window.location.href = blobUrl;
       setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // Защита от DevTools
+    // DevTools защита
     document.addEventListener("keydown", function(e) {
       if (
         e.key === "F12" ||
@@ -171,7 +184,7 @@
     document.body.oncopy = e => e.preventDefault();
     document.body.oncut = e => e.preventDefault();
 
-    // Ловушка на изменение размера окна
+    // Ловушка на изменения окна
     let devtoolsCount = 0;
     setInterval(() => {
       if (
