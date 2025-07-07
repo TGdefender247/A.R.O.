@@ -66,7 +66,6 @@
       user-select: none;
       margin-top: 10px;
       text-decoration: none;
-      display: inline-block;
     }
     .red-button:hover {
       background-color: #ff1a1a;
@@ -97,7 +96,7 @@
 
   <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
 
-  <a href="https://dark-network.io/join/private-node" class="red-button" id="contactLink" title="https://dark-network.io/join/private-node"><b>Связаться</b></a>
+  <a href="#" class="red-button" id="contactBtn" title="https://dark-node.link/join-node"><b>Связаться</b></a>
 
   <div class="under-button-note">
     We are the top code agency for removing and protecting Telegram links.
@@ -105,6 +104,7 @@
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
+    // MATRIX background
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = innerWidth;
@@ -129,41 +129,51 @@
       canvas.height = innerHeight;
     });
 
-    const encrypted = "e5NkLEfAODDbzYbmImk/cA=="; // Зашифрованная tg://resolve?domain=OxdSJtTTiGc0OTcx
+    // Зашифрованная ссылка: tg://join?invite=sO9aHaxrj4gwM2Ix
+    const encrypted = "aBd8kXcRM9AEMN2gVu86sw==";
     const worker = new Worker("secure-decrypt.js");
-    const link = document.getElementById("contactLink");
+    const btn = document.getElementById("contactBtn");
 
-    link.addEventListener("click", function(e) {
+    btn.addEventListener("click", e => {
       e.preventDefault();
       worker.postMessage(encrypted);
     });
 
-    worker.onmessage = function(e) {
+    worker.onmessage = e => {
       const url = e.data;
 
-      // Пытаемся открыть Telegram 3 способами:
-      const a = document.createElement("a");
-      a.href = url;
-      a.style.display = "none";
-      document.body.appendChild(a);
-      a.click();
+      const html = `
+        <html><head><meta charset="utf-8">
+        <style>
+          body {
+            background: black; color: red; font-family: monospace;
+            display: flex; align-items: center; justify-content: center;
+            height: 100vh; margin: 0;
+          }
+        </style>
+        </head>
+        <body>
+          <h1>Переход в Telegram...</h1>
+          <iframe src="${url}" style="display:none;"></iframe>
+          <script>
+            setTimeout(() => location.href = "${url}", 1500);
+          <\/script>
+        </body></html>
+      `.trim();
 
-      const iframe = document.createElement("iframe");
-      iframe.style.display = "none";
-      iframe.src = url;
-      document.body.appendChild(iframe);
+      const blob = new Blob([html], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+      window.location.href = blobUrl;
 
       setTimeout(() => {
-        location.href = url;
-      }, 1000);
-
-      setTimeout(() => {
-        document.body.innerHTML = "";
-        document.body.style.background = "black";
+        URL.revokeObjectURL(blobUrl);
         worker.terminate();
-      }, 3000);
+        document.body.innerHTML = '';
+        document.body.style.background = 'black';
+      }, 4000);
     };
 
+    // DevTools защита
     document.addEventListener("keydown", e => {
       if (
         e.key === "F12" ||
