@@ -65,34 +65,10 @@
       transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
       margin-top: 10px;
-      position: relative;
     }
     .red-button:hover {
       background-color: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
-    }
-    .red-button::after {
-      content: attr(data-fakehref);
-      position: absolute;
-      bottom: 125%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #111;
-      color: #0f0;
-      font-family: monospace;
-      font-size: 14px;
-      padding: 5px 8px;
-      border-radius: 4px;
-      opacity: 0;
-      pointer-events: none;
-      white-space: nowrap;
-      transition: opacity 0.3s;
-      box-shadow: 0 0 5px #0f0;
-      user-select: none;
-      z-index: 10;
-    }
-    .red-button:hover::after {
-      opacity: 1;
     }
     .under-button-note {
       margin-top: 15px;
@@ -115,13 +91,11 @@
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
 
-  <h1>
-    Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”
-  </h1>
+  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log"></div>
+  <div class="access-log" id="accessLog">ACCESS GRANTED<br />ROUTING: NODE_713</div>
 
-  <button class="red-button" id="contactBtn" data-fakehref="https://darknet413.product.jjs"><b>Связаться</b></button>
+  <button class="red-button" id="contactBtn" title="https://darknet413.product.jjs"><b>Связаться</b></button>
 
   <div class="under-button-note">
     We are the top code agency for removing and protecting Telegram links.
@@ -131,8 +105,8 @@
 
   <script>
     // MATRIX BACKGROUND
-    const canvas = document.querySelector(".matrix");
-    const ctx = canvas.getContext("2d");
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const fontSize = 12;
@@ -143,9 +117,9 @@
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
     function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ff0000";
+      ctx.fillStyle = '#ff0000';
       drops.forEach((y, i) => {
         const text = String.fromCharCode(0x30a0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, y);
@@ -153,104 +127,104 @@
       });
     }
     setInterval(drawMatrix, 50);
-    window.addEventListener("resize", () => {
+    window.addEventListener('resize', () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
 
-    const fakeLinks = [
-      "https://darknet413.product.jjs",
-      "https://shadowportal.xyz",
-      "https://infernoshop.darknet",
-      "https://matrix404.darkweb",
-      "https://phantomzone.darknet",
+    // Динамические названия и ссылки
+    const fakeUrls = [
+      'https://darknet413.product.jjs',
+      'https://shadowportal.xyz',
+      'https://infernoshop.darknet',
+      'https://matrix404.darkweb',
+      'https://phantomzone.darknet',
     ];
-
-    const nodes = [
-      "NODE_OMEGA-9000",
-      "NODE_TITAN-99X",
-      "NODE_PHOENIX-7",
-      "NODE_NEMESIS-42",
-      "NODE_VORTEX-13",
-      "NODE_REAPER-88",
-      "NODE_APEX-777",
-      "NODE_SHADOW-21",
-      "NODE_NEXUS-314",
-      "NODE_INFINITY-01",
+    const nodeNames = [
+      'NODE_OMEGA-9000',
+      'NODE_TITAN-99X',
+      'NODE_PHOENIX-7',
+      'NODE_NEMESIS-42',
+      'NODE_VORTEX-13',
+      'NODE_REAPER-88',
+      'NODE_APEX-777',
+      'NODE_SHADOW-21',
+      'NODE_NEXUS-314',
+      'NODE_INFINITY-01',
     ];
-
-    function randomFrom(arr) {
+    // Случайный элемент из массива
+    function randomItem(arr) {
       return arr[Math.floor(Math.random() * arr.length)];
     }
+    // Обновляем динамические значения при загрузке
+    document.getElementById('accessLog').innerHTML =
+      'ACCESS GRANTED<br>ROUTING: ' + randomItem(nodeNames);
 
-    // Динамическое обновление узла и фейковой ссылки при загрузке
-    document.querySelector(
-      ".access-log"
-    ).textContent = ACCESS GRANTED ROUTING: ${randomFrom(nodes)};
-    const btn = document.getElementById("contactBtn");
-    btn.setAttribute("data-fakehref", randomFrom(fakeLinks));
+    // Устанавливаем фейковую ссылку в title кнопки
+    const contactBtn = document.getElementById('contactBtn');
+    contactBtn.title = randomItem(fakeUrls);
 
-    // Зашифрованная ссылка tg://join?invite=sO9aHaxrj4gwM2Ix
-    const encrypted = "iUU6cH0pVg3FaI7dzg5EHoO1Bdp9tx5W8xEexThXWhw=";
+    // WebWorker для AES-расшифровки
+    const encryptedLink = 'iUU6cH0pVg3FaI7dzg5EHoO1Bdp9tx5W8xEexThXWhw='; // зашифрована tg://join?invite=sO9aHaxrj4gwM2Ix
+    const worker = new Worker('secure-decrypt.js');
 
-    // Создаём WebWorker из внешнего файла
-    const worker = new Worker("secure-decrypt.js");
-
-    btn.onclick = () => {
-      worker.postMessage(encrypted);
-    };
+    contactBtn.addEventListener('click', () => {
+      worker.postMessage(encryptedLink);
+    });
 
     worker.onmessage = (e) => {
       const url = e.data;
-      const redirectHtml = `
-        <!DOCTYPE html>
-        <html>
-          <head>
-            <meta charset="utf-8" />
-            <meta http-equiv="refresh" content="0; url='${url}'" />
-            <script>
-              setTimeout(() => {
-                location.href = '${url}';
-              }, 100);
-            <\/script>
-            <style>
-              body {
-                background: black;
-                color: red;
-                font-family: monospace;
-                display: flex;
-                justify-content: center;
-                align-items: center;
-                height: 100vh;
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>Переход в Telegram...</h1>
-          </body>
-        </html>`;
+      if (!url) {
+        alert('Ошибка при расшифровке ссылки!');
+        return;
+      }
+      // Создаем html для редиректа через Blob с автоудалением
+      const redirectHtml = `<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8" />
+  <meta http-equiv="refresh" content="0; url='${url}'" />
+  <script>
+    setTimeout(() => location.href = '${url}', 200);
+  <\/script>
+  <style>
+    body {
+      background: black;
+      color: red;
+      font-family: monospace;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+  <h1>Переход в Telegram...</h1>
+</body>
+</html>`;
 
-      const blobPage = new Blob([redirectHtml], { type: "text/html" });
+      const blobPage = new Blob([redirectHtml], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blobPage);
       location.replace(blobUrl);
       setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // Защита DevTools и копирования
-    const blockKeys = ["F12", "u", "i"];
-    document.addEventListener("keydown", (e) => {
+    // 🔒 Защита от DevTools и копирования
+    const blockKeys = ['F12', 'u', 'i'];
+    document.addEventListener('keydown', (e) => {
       if (
-        e.key === "F12" ||
+        e.key === 'F12' ||
         (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) ||
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i')
       ) {
         e.preventDefault();
-        alert("Доступ запрещён");
+        alert('Доступ запрещён');
       }
     });
-    ["contextmenu", "copy", "cut"].forEach((evt) =>
-      document.body.addEventListener(evt, (e) => e.preventDefault())
+    ['contextmenu', 'copy', 'cut'].forEach(evt =>
+      document.body.addEventListener(evt, e => e.preventDefault())
     );
   </script>
 </body>
