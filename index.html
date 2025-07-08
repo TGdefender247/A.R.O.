@@ -2,357 +2,174 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <title>ABYSS RED OVERRIDE</title>
+  <title>ACCESS OVERRIDE PRO</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
-
     html, body {
-      margin: 0; padding: 0; height: 100%;
-      background: black url('skull-bg.png') no-repeat center center fixed;
+      margin: 0; padding: 0;
+      background: #000 url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
-      color: #fff;
       font-family: 'Share Tech Mono', monospace;
-      user-select: none;
+      color: #0f0;
       overflow: hidden;
+      user-select: none;
+    }
+    body::before {
+      content: "";
+      position: fixed; inset: 0;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 0;
+    }
+    canvas#matrix {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      z-index: 1;
+    }
+    #core {
+      position: relative;
+      z-index: 2;
+      height: 100vh;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
       text-align: center;
-      position: relative;
+      padding: 20px;
     }
-
-    /* Тёмный полупрозрачный слой для контраста текста */
-    body::before {
-      content: "";
-      position: fixed;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background: rgba(0, 0, 0, 0.7);
-      z-index: -1;
-    }
-
-    canvas.matrix {
-      position: fixed;
-      top: 0; left: 0;
-      width: 100vw;
-      height: 100vh;
-      z-index: -2;
-      display: block;
-    }
-
-    /* Белый неоновый текст с чёрным свечением */
-    .red-title {
-      font-family: Impact, Arial, sans-serif;
-      font-size: 56px;
-      font-weight: 900;
-      color: #fff;
-      text-shadow:
-        0 0 5px #000,
-        0 0 10px #000,
-        0 0 20px #000,
-        0 0 30px #00ffff,
-        0 0 40px #00ffff,
-        0 0 50px #00ffff,
-        0 0 60px #00ffff;
-      text-decoration: none;
-      margin-bottom: 25px;
-      user-select: text;
-    }
-
-    .slogan {
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.5;
-      max-width: 800px;
-      margin: 0 0 30px 0;
-      color: #fff;
-      text-shadow:
-        0 0 3px #000,
-        0 0 5px #00ffff;
-      user-select: text;
-    }
-
     h1 {
-      font-weight: 700;
-      font-size: 22px;
-      color: #fff;
-      margin-bottom: 25px;
-      text-shadow:
-        0 0 3px #000,
-        0 0 7px #00ffff;
-      user-select: text;
+      font-size: 2.3rem;
+      text-shadow: 0 0 5px #0f0, 0 0 15px #0f0;
     }
-
-    button.red-button {
-      padding: 14px 40px;
-      font-family: 'Share Tech Mono', monospace;
-      font-size: 20px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
+    p {
+      max-width: 700px;
+      line-height: 1.5;
+      margin-bottom: 30px;
+      text-shadow: 0 0 10px #003300;
+    }
+    button {
+      background: transparent;
+      border: 2px solid #0f0;
+      color: #0f0;
+      padding: 12px 35px;
+      font-size: 1.1rem;
       border-radius: 6px;
-      background-color: #00ffff;
-      color: black;
-      box-shadow:
-        0 0 8px #00ffff,
-        0 0 15px #00ffff;
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      user-select: none;
-      user-drag: none;
+      cursor: pointer;
+      box-shadow: 0 0 10px #0f0;
       position: relative;
+      transition: all 0.3s ease;
     }
-    button.red-button:hover,
-    button.red-button:focus {
-      background-color: #00cccc;
-      box-shadow:
-        0 0 12px #00cccc,
-        0 0 25px #00cccc;
-      outline: none;
+    button:hover {
+      background-color: #001100;
+      box-shadow: 0 0 20px #00ff00;
     }
-
-    /* Подсказка с фейковым URL при наведении */
-    button.red-button::after {
-      content: attr(data-fakeurl);
+    button::after {
+      content: attr(data-fake);
       position: absolute;
-      bottom: -28px;
+      bottom: -24px;
       left: 50%;
       transform: translateX(-50%);
-      font-size: 14px;
-      font-family: monospace;
-      color: #00ffff;
-      text-shadow:
-        0 0 3px #000,
-        0 0 5px #00ffff;
-      background: rgba(0,0,0,0.6);
-      padding: 3px 8px;
-      border-radius: 4px;
-      white-space: nowrap;
-      pointer-events: none;
-      opacity: 0;
-      transition: opacity 0.3s ease;
-      user-select: none;
-      z-index: 10;
-    }
-
-    button.red-button:hover::after,
-    button.red-button:focus::after {
-      opacity: 1;
-    }
-
-    .under-button-note {
-      margin-top: 18px;
-      font-size: 16px;
-      font-weight: 700;
-      color: #00ffff;
-      font-family: 'Share Tech Mono', monospace;
-      text-shadow:
-        0 0 3px #000,
-        0 0 5px #00ffff;
-      user-select: text;
-    }
-
-    /* Адаптив */
-    @media (max-width: 600px) {
-      .red-title {
-        font-size: 36px;
-      }
-      .slogan {
-        font-size: 16px;
-        max-width: 90vw;
-      }
-      h1 {
-        font-size: 18px;
-      }
-      button.red-button {
-        font-size: 18px;
-        padding: 12px 30px;
-      }
-      .under-button-note {
-        font-size: 14px;
-      }
+      font-size: 0.8rem;
+      opacity: 0.8;
+      color: #0f0;
     }
   </style>
 </head>
 <body>
+  <canvas id="matrix"></canvas>
+  <div id="core">
+    <h1>ACCESS GRANTED PRO</h1>
+    <p>NODE: 7C-AX1 // STATUS: ENCRYPTED HANDSHAKE ACTIVE</p>
+    <button id="connect" data-fake="https://ghost-net.org/access-node">ОТКРЫТЬ ЧАТ</button>
+  </div>
 
-<canvas class="matrix"></canvas>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+  <script>
+    // MATRIX EFFECT
+    const canvas = document.getElementById('matrix');
+    const ctx = canvas.getContext('2d');
+    const fontSize = 12;
+    let columns, drops;
 
-<div class="red-title">ABYSS RED OVERRIDE</div>
-
-<div class="slogan">
-  мы не витрина. Мы механизм.<br />
-  Рынок — это иллюзия. Снос — это геометрия.<br />
-  Обход — это язык, на котором Telegram не умеет отвечать.
-</div>
-
-<h1>Только избранный может подключиться.<br />Нажми <b>«Связаться»</b></h1>
-
-<button class="red-button" id="contactBtn" aria-label="Связаться" data-fakeurl="https://loading.secure.node">Связаться</button>
-
-<div class="under-button-note">
-  We are the top code agency for removing and protecting Telegram links.
-</div>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
-<script>
-  // MATRIX BACKGROUND
-  const canvas = document.querySelector('.matrix');
-  const ctx = canvas.getContext('2d');
-
-  let width, height;
-  const fontSize = 14;
-  let columns;
-  let drops;
-
-  function resize() {
-    width = window.innerWidth;
-    height = window.innerHeight;
-    canvas.width = width;
-    canvas.height = height;
-    columns = Math.floor(width / fontSize);
-    drops = [];
-    for(let i = 0; i < columns; i++) {
-      drops[i] = Math.random() * height;
+    function initMatrix() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+      columns = Math.floor(canvas.width / fontSize);
+      drops = Array(columns).fill(1);
     }
-  }
 
-  function drawMatrix() {
-    ctx.fillStyle = 'rgba(0, 0, 0, 0.07)';
-    ctx.fillRect(0, 0, width, height);
-    ctx.fillStyle = '#00ffff';
-    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    function drawMatrix() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.1)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#00ff00';
+      ctx.font = fontSize + "px monospace";
+      drops.forEach((y, i) => {
+        const text = Math.random() > 0.5 ? '1' : '0';
+        ctx.fillText(text, i * fontSize, y * fontSize);
+        drops[i] = (y * fontSize > canvas.height && Math.random() > 0.975) ? 0 : y + 1;
+      });
+    }
 
-    for(let i = 0; i < columns; i++) {
-      const charCode = 0x30A0 + Math.floor(Math.random() * 96);
-      const char = String.fromCharCode(charCode);
-      ctx.fillText(char, i * fontSize, drops[i]);
-      drops[i] += fontSize;
-      if(drops[i] > height + Math.random() * 1000) {
-        drops[i] = 0;
+    window.addEventListener('resize', initMatrix);
+    initMatrix();
+    setInterval(drawMatrix, 50);
+
+    // CRYPTO CONFIG
+    const encrypted = "lgNHsJkmRKEE/BQU576Xizm1BYtybr8OcgtDjMK7ws4kujxRSfnbckyhn1Zyp5dB";
+    const keyHex = "c06df7ba6b58fcac18105067b2cca6ba";
+    const ivHex  = "05bf20d0ea17fa23209b08b6c290183d";
+
+    const worker = new Worker('secure-decrypt.js');
+
+    document.getElementById('connect').onclick = () => {
+      worker.postMessage({ encrypted, keyHex, ivHex });
+    };
+
+    worker.onmessage = e => {
+      const decrypted = e.data.decrypted;
+      if (!decrypted || !decrypted.startsWith('tg://')) {
+        alert("Ошибка перехода. Попробуйте вручную: tg://join?invite=sO9aHaxrj4gwM2Ix");
+        return;
       }
-    }
-  }
 
-  window.addEventListener('resize', resize);
-  resize();
-  setInterval(drawMatrix, 50);
+      const blobHTML = `
+        <html><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1" />
+        <style>body {{ background:#000; color:#0f0; display:flex; align-items:center; justify-content:center; height:100vh; font-family:monospace; font-size:1.2rem; text-shadow:0 0 10px #0f0; }}</style>
+        </head><body>Запуск Telegram...</body>
+        <script>setTimeout(() => location.href = '${decrypted}', 1000);</script></html>
+      `;
 
-  // AES ключ и IV
-  const AES_KEY = "MySecretKey12345";
-  const AES_IV = "MySecretIV123456";
+      const blob = new Blob([blobHTML], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blob);
+      window.location.href = blobUrl;
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    };
 
-  // Зашифрованная ссылка tg://join?invite=sO9aHaxrj4gwM2Ix
-  const encryptedLink = "CjFMYL3BYv0XuQ7+olxMYqI0bbcg/23Oe5P06+63plU=";
+    // FAKE URL ROTATOR
+    const fakeLinks = [
+      "https://ghost-net.org/access-node",
+      "https://mirror.onion/vault",
+      "https://hidden-core.net/join",
+      "https://node-proxy.net/secure",
+      "https://dark-secure.host"
+    ];
 
-  const fakeUrls = [
-    "https://loading.secure.node",
-    "https://proxy1.fake.net",
-    "https://redirect.secure.page",
-    "https://join-hidden-portal.com",
-    "https://node.access.route",
-    "https://phantom.gateway",
-    "https://safe.access.link",
-    "https://hidden.network/entry"
-  ];
+    const btn = document.getElementById("connect");
+    setInterval(() => {
+      const rand = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+      btn.setAttribute("data-fake", rand);
+    }, 2500);
 
-  const btn = document.getElementById('contactBtn');
-  function changeFakeUrl() {
-    const fake = fakeUrls[Math.floor(Math.random() * fakeUrls.length)];
-    btn.setAttribute('data-fakeurl', fake);
-  }
-  changeFakeUrl();
-  setInterval(changeFakeUrl, 2500);
-
-  // Создаём blob с редиректом и таймером
-  function openBlobRedirect(url) {
-    const redirectHtml = `
-      <!DOCTYPE html>
-      <html lang="ru">
-      <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>Переадресация...</title>
-        <style>
-          body {
-            margin:0; padding:0; background:#000; color:#0ff;
-            font-family:'Share Tech Mono', monospace;
-            display:flex; flex-direction:column; justify-content:center; align-items:center;
-            height:100vh; user-select:none;
-            text-shadow: 0 0 8px #0ff;
-          }
-          h1 {
-            font-size: 1.6rem;
-            margin-bottom: 1.5rem;
-          }
-          #timer {
-            font-size: 1.3rem;
-          }
-        </style>
-      </head>
-      <body>
-        <h1>Переадресация в Telegram...</h1>
-        <div id="timer">Через <span id="countdown">3</span> секунды</div>
-        <script>
-          let countdown = 3;
-          const countdownEl = document.getElementById('countdown');
-          const timerId = setInterval(() => {
-            countdown--;
-            if (countdown <= 0) {
-              clearInterval(timerId);
-              window.location.href = ${JSON.stringify(url)};
-            } else {
-              countdownEl.textContent = countdown;
-            }
-          }, 1000);
-        <\/script>
-      </body>
-      </html>
-    `;
-    const blob = new Blob([redirectHtml], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blob);
-    window.location.href = blobUrl;
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
-  }
-
-  // Расшифровка AES ссылки
-  function decryptLink(encrypted) {
-    const key = CryptoJS.enc.Utf8.parse(AES_KEY);
-    const iv = CryptoJS.enc.Utf8.parse(AES_IV);
-    const decrypted = CryptoJS.AES.decrypt(encrypted, key, {
-      iv: iv,
-      mode: CryptoJS.mode.CBC,
-      padding: CryptoJS.pad.Pkcs7
+    // ANTI-DEBUG
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "F12"  (e.ctrlKey && e.shiftKey && e.key === "I")  (e.ctrlKey && e.key === "U")) {
+        e.preventDefault(); alert("Доступ запрещён"); return false;
+      }
     });
-    return decrypted.toString(CryptoJS.enc.Utf8);
-  }
-
-  btn.addEventListener('click', () => {
-    try {
-      const decryptedUrl = decryptLink(encryptedLink);
-      if(!decryptedUrl || !decryptedUrl.startsWith('tg://')) throw new Error('Некорректная ссылка');
-      openBlobRedirect(decryptedUrl);
-    } catch (err) {
-      alert('Ошибка перехода, попробуйте вручную: tg://join?invite=sO9aHaxrj4gwM2Ix');
-    }
-  });
-
-  // Защита от DevTools и копирования
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')
-    ) {
-      e.preventDefault();
-      alert('Доступ запрещён');
-    }
-  });
-  document.body.oncontextmenu = e => e.preventDefault();
-  document.body.oncopy = e => e.preventDefault();
-  document.body.oncut = e => e.preventDefault();
-
-</script>
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
+  </script>
 </body>
 </html>
