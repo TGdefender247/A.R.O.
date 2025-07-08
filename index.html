@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
@@ -45,8 +45,7 @@
       max-width: 800px;
       margin-bottom: 30px;
     }
-    h1,
-    .access-log {
+    h1, .access-log {
       font-weight: 700;
       font-size: 18px;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
@@ -87,14 +86,14 @@
   <div class="red-title">ABYSS RED OVERRIDE</div>
 
   <div class="slogan">
-    мы не витрина. Мы механизм.<br />
-    Рынок — это иллюзия. Снос — это геометрия.<br />
+    мы не витрина. Мы механизм.<br>
+    Рынок — это иллюзия. Снос — это геометрия.<br>
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
 
-  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
+  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
+  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
 
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
@@ -110,150 +109,37 @@
     canvas.height = window.innerHeight;
     const fontSize = 12;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns)
-      .fill(0)
-      .map(() => Math.random() * canvas.height);
+    const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
     ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
     function drawMatrix() {
-      ctx.fillStyle = 'rgba(0, 0, 0, 0.05)';
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = '#ff0000';
+      ctx.fillStyle = "#ff0000";
       drops.forEach((y, i) => {
-        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, y);
-        drops[i] = y > canvas.height + Math.random() * 10000 ? 0 : y + fontSize;
+        drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
       });
     }
 
     setInterval(drawMatrix, 50);
-    window.addEventListener('resize', () => {
+    window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
-
-    // AES-128-CBC расшифровка через Web Worker
-    // Ключ и IV должны быть 16 байт (128 бит)
-    const keyHex = '00112233445566778899aabbccddeeff'; 
-    // Замените на свой ключ (hex)
-    const ivHex = '0102030405060708090a0b0c0d0e0f10';  // Замените на свой IV (hex)
-
-    // Зашифрованная ссылка (Base64)
-    // Исходная ссылка: tg://join?invite=sO9aHaxrj4gwM2Ix
-    // Зашифрованная ссылка получена через AES-128-CBC (пример)
-    const encryptedLinkBase64 = 'T6H+DcT6plzRk49F0vDg+vrIblY=';
-
-    // WebWorker как Blob
-    const workerCode = `
-      self.importScripts();
-
-      function hexToBytes(hex) {
-        const bytes = new Uint8Array(hex.length / 2);
-        for (let i = 0; i < bytes.length; i++) {
-          bytes[i] = parseInt(hex.substr(i * 2, 2), 16);
-        }
-        return bytes;
-      }
-
-      async function decryptAES(encryptedBase64, keyHex, ivHex) {
-        const encryptedBytes = Uint8Array.from(atob(encryptedBase64), c => c.charCodeAt(0));
-        const keyBytes = hexToBytes(keyHex);
-        const ivBytes = hexToBytes(ivHex);
-        const cryptoKey = await crypto.subtle.importKey(
-          'raw',
-          keyBytes,
-          { name: 'AES-CBC' },
-          false,
-          ['decrypt']
-        );
-        const decrypted = await crypto.subtle.decrypt(
-          { name: 'AES-CBC', iv: ivBytes },
-          cryptoKey,
-          encryptedBytes
-        );
-        return new TextDecoder().decode(decrypted);
-      }
-
-      self.onmessage = async (e) => {
-        try {
-          const { encryptedLinkBase64, keyHex, ivHex } = e.data;
-          const decrypted = await decryptAES(encryptedLinkBase64, keyHex, ivHex);
-          self.postMessage({ decrypted });
-        } catch (err) {
-          self.postMessage({ error: err.message });
-        }
-      };
-    `;
-    const workerBlob = new Blob([workerCode], { type: 'application/javascript' });
-    const workerUrl = URL.createObjectURL(workerBlob);
-    const worker = new Worker(workerUrl);
-
-    let decryptedLink = null;
-
-    worker.onmessage = (e) => {
-      if (e.data.error) {
-        alert('Ошибка расшифровки ссылки: ' + e.data.error);
-        return;
-      }
-      decryptedLink = e.data.decrypted;
-    };
-
-    worker.postMessage({ encryptedLinkBase64, keyHex, ivHex });
-
-    // Фейковые ссылки и ноды
-    const fakeLinks = [
-      "https://darknet413.product.jjs",
-      "https://shadowportal.xyz",
-      "https://infernoshop.darknet",
-      "https://matrix404.darkweb",
-      "https://phantomzone.darknet"
-    ];
-
-    const nodes = [
-      "NODE_OMEGA-9000",
-      "NODE_TITAN-99X",
-      "NODE_PHOENIX-7",
-      "NODE_NEMESIS-42",
-      "NODE_VORTEX-13",
-      "NODE_REAPER-88",
-      "NODE_APEX-777",
-      "NODE_SHADOW-21",
-      "NODE_NEXUS-314",
-      "NODE_INFINITY-01"
-    ];
-
-    // Выбираем случайный фейковый адрес и ноду
-    const randomFakeLink = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
-    const randomNode = nodes[Math.floor(Math.random() * nodes.length)];
-
-    // Вешаем на кнопку title с этим адресом
-    const contactBtn = document.getElementById("contactBtn");
-    contactBtn.title = randomFakeLink;
-
-    // Добавляем отображение выбранной ноды ниже кнопки
-    const extraInfoDiv = document.createElement("div");
-    extraInfoDiv.style.marginTop = "12px";
-    extraInfoDiv.style.fontFamily = "'Share Tech Mono', monospace";
-    extraInfoDiv.style.color = "#ff3333";
-    extraInfoDiv.style.fontWeight = "700";
-    extraInfoDiv.style.textShadow = "1px 1px 0 black";
-    extraInfoDiv.style.fontSize = "14px";
-    extraInfoDiv.textContent = Активный Node: ${randomNode};
-    contactBtn.insertAdjacentElement("afterend", extraInfoDiv);
-
-    // По нажатию создаём blob страницу и редиректим
-    contactBtn.onclick = () => {
-      if (!decryptedLink) {
-        alert('Ссылка пока не готова, попробуйте позже.');
-        return;
-      }
+    // TELEGRAM REDIRECT VIA BLOB
+    document.getElementById("contactBtn").onclick = () => {
+      const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
       const html = `<!DOCTYPE html>
-<html lang="ru">
+<html>
 <head>
-  <meta charset="utf-8" />
-  <meta http-equiv="refresh" content="0; url='${decryptedLink}'" />
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url='${link}'">
   <script>
-    setTimeout(() => { location.href = '${decryptedLink}'; }, 100);
+    setTimeout(() => {
+      location.href = '${link}';
+    }, 100);
   <\/script>
   <style>
     body {
@@ -275,29 +161,24 @@
 
       const blobPage = new Blob([html], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blobPage);
-
       location.replace(blobUrl);
-
-      // Автоудаление blob через 5 секунд, чтобы нельзя было узнать URL
-      setTimeout(() => {
-        URL.revokeObjectURL(blobUrl);
-      }, 5000);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // 🔒 Блокировка DevTools / контекстного меню / копирования / вырезания
-    const blockKeys = ['F12', 'u', 'i'];
-    document.addEventListener('keydown', (e) => {
+    // 🔒 DevTools / Context menu / Copy / Cut
+    const blockKeys = ["F12", "u", "i"];
+    document.addEventListener("keydown", (e) => {
       if (
-        e.key === 'F12' ||
-        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) ||
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i')
+        e.key === "F12" 
+        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) 
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
       ) {
         e.preventDefault();
-        alert('Доступ запрещён');
+        alert("Доступ запрещён");
       }
     });
-    ['contextmenu', 'copy', 'cut'].forEach((evt) =>
-      document.body.addEventListener(evt, (e) => e.preventDefault())
+    ["contextmenu", "copy", "cut"].forEach(evt =>
+      document.body.addEventListener(evt, e => e.preventDefault())
     );
   </script>
 </body>
