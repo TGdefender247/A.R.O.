@@ -1,195 +1,184 @@
-"ОТЗЫВЫ": "tg://join?invite=r_YNyC6D2BljMzcy",
-    "ЧАТ": "tg://join?invite=6LPNuuSTKzMyMmJi",
-    "НОВОСТИ": "tg://join?invite=2h-o-940Sj42Yjdh",
-    "ОПЕРАТОР": "tg://join?invite=sO9aHaxrj4gwM2Ix" // Вставлена нужная ссылка
-  };
-
-  const fakeLinks = [
-    "https://proxy1.fake.net", "https://redirect.secure.page",
-    "https://join-hidden-portal.com", "https://node.access.route"
-  ];
-
-  function openViaBlob(realUrl) {
-    const blobPage = `
 <!DOCTYPE html>
 <html lang="ru">
 <head>
   <meta charset="UTF-8">
-  <title>Telegram Redirect</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ABYSS RED OVERRIDE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
-      margin:0; padding:0; background:black; color:#b289ff;
-      font-family:'Share Tech Mono', monospace;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      height:100vh; text-align:center;
+      margin: 0;
+      background: black url('skull-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: #fff;
+      font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      user-select: none;
     }
-    h1 { font-size:1.3rem; margin-bottom:1rem; }
-    button {
-      padding:10px 20px;
-      font-size:1rem;
-      background:transparent;
-      border:2px solid #b289ff;
-      color:#b289ff;
-      border-radius:8px;
-      cursor:pointer;
-      text-shadow:0 0 6px #b289ff;
+    canvas.matrix {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: -1;
     }
-    button:hover {
-      background:#b289ff;
-      color:black;
-      box-shadow:0 0 12px #b289ff;
+    .red-title {
+      font-family: Impact, Arial, sans-serif;
+      font-size: 56px;
+      font-weight: 900;
+      color: red;
+      text-shadow: 2px 2px 6px black, 0 0 12px black;
+      text-decoration: underline;
+      margin-bottom: 30px;
     }
-    .timer { margin-top:1rem; font-size:1rem; }
+    .slogan {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1.6;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+    h1, .access-log {
+      font-weight: 700;
+      font-size: 18px;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      margin: 10px 0;
+    }
+    .red-button {
+      padding: 12px 30px;
+      font-family: 'Share Tech Mono', monospace;
+      font-size: 18px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      background-color: #cc0000;
+      color: white;
+      box-shadow: 0 0 8px #cc0000;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+      margin-top: 10px;
+    }
+    .red-button:hover {
+      background-color: #ff1a1a;
+      box-shadow: 0 0 15px #ff1a1a;
+    }
+    .under-button-note {
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+    }
   </style>
 </head>
 <body>
-  <h1>Переход в Telegram...</h1>
-  <button onclick="window.location.href='${realUrl}'">Открыть сейчас</button>
-  <div class="timer">Открытие через <span id="countdown">3</span> сек.</div>
+  <canvas class="matrix"></canvas>
+
+  <div class="red-title">ABYSS RED OVERRIDE</div>
+
+  <div class="slogan">
+    мы не витрина. Мы механизм.<br>
+    Рынок — это иллюзия. Снос — это геометрия.<br>
+    Обход — это язык, на котором Telegram не умеет отвечать.
+  </div>
+
+  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
+
+  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
+
+  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
+
+  <div class="under-button-note">
+    We are the top code agency for removing and protecting Telegram links.
+  </div>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
   <script>
-    let c = 3;
-    const el = document.getElementById("countdown");
-    const timer = setInterval(() => {
-      c--;
-      el.textContent = c;
-      if (c <= 0) {
-        clearInterval(timer);
-        window.location.href = "${realUrl}";
+    // MATRIX BACKGROUND
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const fontSize = 12;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
+    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ff0000";
+      drops.forEach((y, i) => {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, y);
+        drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
+      });
+    }
+    setInterval(drawMatrix, 50);
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+
+    // Зашифрованная ссылка: tg://join?invite=sO9aHaxrj4gwM2Ix
+    const encrypted = "iUU6cH0pVg3FaI7dzg5EHoO1Bdp9tx5W8xEexThXWhw=";
+      const workerCode = `
+      importScripts('https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js');
+      onmessage = function(e) {
+        const key = CryptoJS.enc.Utf8.parse("MySecretKey12345");
+        const iv = CryptoJS.enc.Utf8.parse("MySecretIV123456");
+        const decrypted = CryptoJS.AES.decrypt(e.data, key, {
+          iv: iv,
+          mode: CryptoJS.mode.CBC,
+          padding: CryptoJS.pad.Pkcs7
+        }).toString(CryptoJS.enc.Utf8);
+        postMessage(decrypted);
+      };
+    `;
+    const blob = new Blob([workerCode], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(blob);
+    const worker = new Worker(workerUrl);
+
+    document.getElementById("contactBtn").onclick = () => {
+      worker.postMessage(encrypted);
+    };
+
+    worker.onmessage = (e) => {
+      const url = e.data;
+      const redirectHtml = `
+        <html><head><meta charset="utf-8">
+        <meta http-equiv="refresh" content="3;url=${url}">
+        <style>body{background:black;color:red;font-family:monospace;display:flex;align-items:center;justify-content:center;height:100vh;margin:0;}</style>
+        </head><body><h1>Переадресация в Telegram...</h1></body></html>
+      `;
+      const blobPage = new Blob([redirectHtml], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blobPage);
+      window.location.href = blobUrl;
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    };
+
+    // DevTools Защита
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i") ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
       }
-    }, 1000);
-  <\/script>
-</body>
-</html>`;
-    const blob = new Blob([blobPage], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blob);
-    window.open(blobUrl, '_blank', 'noopener,noreferrer');
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
-  }
-
-  const container = document.getElementById('container');
-  Object.entries(realLinks).forEach(([label, url]) => {
-    const btn = document.createElement('button');
-    btn.textContent = label;
-    btn.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
-    btn.onclick = () => openViaBlob(url);
-    container.appendChild(btn);
-  });
-
-  // Защита
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')
-    ) {
-      e.preventDefault();
-      alert('Доступ запрещён');
-    }
-  });
-  document.body.oncontextmenu = e => e.preventDefault();
-  document.body.oncopy = e => e.preventDefault();
-  document.body.oncut = e => e.preventDefault();
-</script>
-
-</body>
-</html>
-
-"ОТЗЫВЫ": "tg://join?invite=r_YNyC6D2BljMzcy",
-    "ЧАТ": "tg://join?invite=6LPNuuSTKzMyMmJi",
-    "НОВОСТИ": "tg://join?invite=2h-o-940Sj42Yjdh",
-    "ОПЕРАТОР": "tg://join?invite=sO9aHaxrj4gwM2Ix" // Вставлена нужная ссылка
-  };
-
-  const fakeLinks = [
-    "https://proxy1.fake.net", "https://redirect.secure.page",
-    "https://join-hidden-portal.com", "https://node.access.route"
-  ];
-
-  function openViaBlob(realUrl) {
-    const blobPage = `
-<!DOCTYPE html>
-<html lang="ru">
-<head>
-  <meta charset="UTF-8">
-  <title>Telegram Redirect</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      margin:0; padding:0; background:black; color:#b289ff;
-      font-family:'Share Tech Mono', monospace;
-      display:flex; flex-direction:column;
-      align-items:center; justify-content:center;
-      height:100vh; text-align:center;
-    }
-    h1 { font-size:1.3rem; margin-bottom:1rem; }
-    button {
-      padding:10px 20px;
-      font-size:1rem;
-      background:transparent;
-      border:2px solid #b289ff;
-      color:#b289ff;
-      border-radius:8px;
-      cursor:pointer;
-      text-shadow:0 0 6px #b289ff;
-    }
-    button:hover {
-      background:#b289ff;
-      color:black;
-      box-shadow:0 0 12px #b289ff;
-    }
-    .timer { margin-top:1rem; font-size:1rem; }
-  </style>
-</head>
-<body>
-  <h1>Переход в Telegram...</h1>
-  <button onclick="window.location.href='${realUrl}'">Открыть сейчас</button>
-  <div class="timer">Открытие через <span id="countdown">3</span> сек.</div>
-  <script>
-    let c = 3;
-    const el = document.getElementById("countdown");
-    const timer = setInterval(() => {
-      c--;
-      el.textContent = c;
-      if (c <= 0) {
-        clearInterval(timer);
-        window.location.href = "${realUrl}";
-      }
-    }, 1000);
-  <\/script>
-</body>
-</html>`;
-    const blob = new Blob([blobPage], { type: 'text/html' });
-    const blobUrl = URL.createObjectURL(blob);
-    window.open(blobUrl, '_blank', 'noopener,noreferrer');
-    setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
-  }
-
-  const container = document.getElementById('container');
-  Object.entries(realLinks).forEach(([label, url]) => {
-    const btn = document.createElement('button');
-    btn.textContent = label;
-    btn.title = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
-    btn.onclick = () => openViaBlob(url);
-    container.appendChild(btn);
-  });
-
-  // Защита
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'i') ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')
-    ) {
-      e.preventDefault();
-      alert('Доступ запрещён');
-    }
-  });
-  document.body.oncontextmenu = e => e.preventDefault();
-  document.body.oncopy = e => e.preventDefault();
-  document.body.oncut = e => e.preventDefault();
-</script>
-
+    });
+    document.body.oncontextmenu = e => e.preventDefault();
+    document.body.oncopy = e => e.preventDefault();
+    document.body.oncut = e => e.preventDefault();
+  </script>
 </body>
 </html>
