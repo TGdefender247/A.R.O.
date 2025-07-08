@@ -10,7 +10,7 @@ onmessage = function(e) {
       padding: CryptoJS.pad.Pkcs7
     }).toString(CryptoJS.enc.Utf8);
     postMessage(decrypted);
-  } catch {
+  } catch (error) {
     postMessage(null);
   }
 };
