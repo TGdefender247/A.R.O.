@@ -3,14 +3,15 @@
 <head>
   <meta charset="UTF-8" />
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
       margin: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      color: #fff;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -28,36 +29,54 @@
       z-index: -1;
     }
     .red-title {
-      font-size: 52px;
-      font-weight: bold;
+      font-family: Impact, Arial, sans-serif;
+      font-size: 56px;
+      font-weight: 900;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
+      text-decoration: underline;
       margin-bottom: 30px;
     }
-    .slogan,
-    .access-log,
-    h1 {
+    .slogan {
+      font-weight: 700;
+      font-size: 20px;
+      line-height: 1.6;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+    h1, .access-log {
       font-weight: 700;
       font-size: 18px;
-      margin: 15px 0;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      margin: 10px 0;
     }
     .red-button {
       padding: 12px 30px;
+      font-family: 'Share Tech Mono', monospace;
       font-size: 18px;
-      font-weight: bold;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
       background-color: #cc0000;
       color: white;
-      border: none;
-      border-radius: 5px;
       box-shadow: 0 0 8px #cc0000;
-      cursor: pointer;
-      transition: 0.3s;
+      transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
+      margin-top: 10px;
     }
     .red-button:hover {
       background-color: #ff1a1a;
-      box-shadow: 0 0 12px #ff1a1a;
+      box-shadow: 0 0 15px #ff1a1a;
+    }
+    .under-button-note {
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
   </style>
 </head>
@@ -65,113 +84,191 @@
   <canvas class="matrix"></canvas>
 
   <div class="red-title">ABYSS RED OVERRIDE</div>
+
   <div class="slogan">
-    Мы не витрина. Мы механизм.<br />
+    мы не витрина. Мы механизм.<br />
+    Рынок — это иллюзия. Снос — это геометрия.<br />
     Обход — это язык, на котором Telegram не умеет отвечать.
   </div>
-  <h1>Только избранный может подключиться. Нажми "Связаться"</h1>
-  <div class="access-log">ACCESS GRANTED // NODE_713</div>
-  <button class="red-button" id="connect">Связаться</button>
+
+  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
+
+  <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
+
+  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
+
+  <div class="under-button-note">
+    We are the top code agency for removing and protecting Telegram links.
+  </div>
 
   <script>
-    // MATRIX BACKGROUND
-    const canvas = document.querySelector(".matrix");
-    const ctx = canvas.getContext("2d");
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+    // MATRIX BACKGROUND ANIMATION
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    let width, height;
     const fontSize = 12;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(0);
-    ctx.font = fontSize + "px 'Share Tech Mono'";
+    let columns;
+    let drops;
+
+    function setupCanvas() {
+      width = window.innerWidth;
+      height = window.innerHeight;
+      canvas.width = width;
+      canvas.height = height;
+      columns = Math.floor(width / fontSize);
+      drops = Array(columns).fill(0).map(() => Math.random() * height);
+      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+    }
 
     function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, width, height);
       ctx.fillStyle = "#ff0000";
-      drops.forEach((y, i) => {
-        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
-        ctx.fillText(text, i * fontSize, y);
-        drops[i] = y > canvas.height ? 0 : y + fontSize;
-      });
+      for(let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, drops[i]);
+        drops[i] = drops[i] > height + Math.random() * 10000 ? 0 : drops[i] + fontSize;
+      }
     }
+
+    setupCanvas();
     setInterval(drawMatrix, 50);
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
+    window.addEventListener('resize', () => {
+      setupCanvas();
     });
 
-    // Зашифрованная ссылка (tg://join?invite=...)
-    const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // Зашифрованная base64
-    const key = "R3dAbyssEncryptX"; // AES ключ 16 символов
-    const iv = "AbyssRedInitVect"; // AES IV 16 символов
-
-    document.getElementById("connect").onclick = () => {
-      const worker = new Worker("secure-decrypt.js");
-      worker.postMessage({ encrypted, key, iv });
-
-      worker.onmessage = function (e) {
-        if (e.data && e.data.error) {
-          alert("Ошибка шифрования: " + e.data.message);
-          return;
+    // AES DECRYPTION FUNCTION (in main thread)
+    // key and iv - Uint8Array, encrypted - base64 string
+    async function aesDecrypt(encryptedBase64, keyStr, ivStr) {
+      // конвертируем base64 в Uint8Array
+      function base64ToArrayBuffer(base64) {
+        const binaryStr = atob(base64);
+        const len = binaryStr.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
+          bytes[i] = binaryStr.charCodeAt(i);
         }
+        return bytes.buffer;
+      }
 
-        const link = e.data;
+      const keyBytes = new TextEncoder().encode(keyStr);
+      const ivBytes = new TextEncoder().encode(ivStr);
 
-        const html = `
-          <!DOCTYPE html>
-          <html>
-          <head>
-            <meta charset="utf-8" />
-            <meta http-equiv="refresh" content="3;url='${link}'" />
-            <script>
-              setTimeout(() => location.href='${link}', 3000);
-            <\/script>
-            <style>
-              body {
-                background: black;
-                color: red;
-                font-family: monospace;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body>
-            <h1>Подключение к защищённому каналу...</h1>
-          </body>
-          </html>
-        `;
+      const cryptoKey = await crypto.subtle.importKey(
+        "raw",
+        keyBytes,
+        { name: "AES-CBC" },
+        false,
+        ["decrypt"]
+      );
+      const encryptedBuffer = base64ToArrayBuffer(encryptedBase64);
+      const decryptedBuffer = await crypto.subtle.decrypt(
+        { name: "AES-CBC", iv: ivBytes },
+        cryptoKey,
+        encryptedBuffer
+      );
 
-        const blob = new Blob([html], { type: "text/html" });
+      return new TextDecoder().decode(decryptedBuffer);
+    }
+
+    // Зашифрованные данные (base64), ключ и IV
+    // Пример шифрования нужно заменить своими значениями
+    const encryptedLinkBase64 = "9By7zY0V/6mXDc6RBLGZbGtf1E/ypQ0CLj1c+0NU2yR9Tzzsps8q6g=="; 
+    // зашифрованный tg://join?invite=sO9aHaxrj4gwM2Ix
+    const key = "16byteslongkey!";  // 16 символов
+    const iv = "16byteslongiv!!!";  // 16 символов
+
+    // Маскировка URL в адресной строке
+    history.replaceState(null, "", "https://darkportal.network/connect");
+
+    // Запрет копирования, контекстного меню, выделения
+    function blockUserActions() {
+      document.body.style.userSelect = "none";
+      document.body.addEventListener("copy", e => e.preventDefault());
+      document.body.addEventListener("cut", e => e.preventDefault());
+      document.body.addEventListener("contextmenu", e => e.preventDefault());
+      document.body.addEventListener("keydown", e => {
+        // Блокируем Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, F12
+        if (
+          e.key === "F12" ||
+          (e.ctrlKey && e.shiftKey && (e.key === "I"  e.key === "J")) 
+          (e.ctrlKey && e.key === "U")
+        ) {
+          e.preventDefault();
+          alert("Доступ запрещён");
+          return false;
+        }
+      });
+      // Дополнительно блокируем открытие DevTools по правому клику + inspect
+      window.addEventListener("devtoolschange", () => {
+        alert("Доступ к инструментам разработчика запрещён");
+        window.close();
+      });
+    }
+    blockUserActions();
+
+    // Проверка открытых DevTools (простая)
+    let devtoolsOpen = false;
+    const threshold = 160;
+    setInterval(() => {
+      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
+      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
+      if (widthThreshold || heightThreshold) {
+        if (!devtoolsOpen) {
+          devtoolsOpen = true;
+          alert("Доступ к инструментам разработчика запрещён");
+          // Можно перенаправить или закрыть вкладку
+          // window.close();
+        }
+      } else {
+        devtoolsOpen = false;
+      }
+    }, 1000);
+
+    // Кнопка "Связаться" — расшифровка и переход с задержкой 3 секунды
+    document.getElementById("contactBtn").addEventListener("click", async () => {
+      try {
+        // Расшифровать ссылку
+        const decryptedLink = await aesDecrypt(encryptedLinkBase64, key, iv);
+
+        // Создаем страницу-переадресатор через blob с задержкой 3 сек
+        const redirectHtml = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Redirecting...</title>
+  <style>
+    body {
+      background: black;
+      color: red;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <h1>Переход в Telegram...</h1>
+  <script>
+    setTimeout(() => {
+      location.href = "${decryptedLink}";
+    }, 3000);
+  <\/script>
+</body>
+</html>`;
+
+        const blob = new Blob([redirectHtml], { type: "text/html" });
         const blobUrl = URL.createObjectURL(blob);
+        location.replace(blobUrl);
 
-        // Маскировка адреса — вместо blob: в адресной строке будет фейковый домен
-        history.pushState({}, "", "https://darkportal.network/connect");
-
-        location.href = blobUrl;
-
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
-      };
-
-      worker.onerror = (e) => {
-        alert("Ошибка в WebWorker: " + e.message);
-        console.error(e);
-      };
-    };
-
-    // Защита от DevTools, контекстного меню и копирования
-    document.addEventListener("contextmenu", (e) => e.preventDefault());
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) ||
-        (e.ctrlKey && e.key.toLowerCase() === "u")
-      ) {
-        e.preventDefault();
-        alert("🔐 Защищено.");
+        // Очистить URL blob через 7 секунд
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
+      } catch (e) {
+        alert("Ошибка при переходе: " + e.message);
       }
     });
   </script>
