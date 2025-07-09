@@ -95,9 +95,9 @@
   });
 
   // ENCRYPTED REDIRECT
-  const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // Зашифрованный tg://join...
-  const key = "R3dAbyssEncryptX"; // 16 символов (AES key)
-  const iv = "AbyssRedInitVect";  // 16 символов (AES IV)
+  const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // зашифрованная tg://join?invite=sO9aHaxrj4gwM2Ix
+  const key = "R3dAbyssEncryptX"; // AES ключ (16 символов)
+  const iv = "AbyssRedInitVect";  // AES IV (16 символов)
 
   document.getElementById("connect").onclick = () => {
     const worker = new Worker("secure-decrypt.js");
@@ -131,16 +131,23 @@
   <h1>Подключение к защищённому каналу...</h1>
 </body>
 </html>`;
+
       const blob = new Blob([html], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      location.replace(url);
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      const blobUrl = URL.createObjectURL(blob);
+
+      // 🔒 Маскируем адрес как будто это внешний переход
+      history.pushState({}, "", "https://darkportal.network/connect");
+
+      // Переход к blob
+      location.href = blobUrl;
+      // Автоматическое удаление blob
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
     worker.onerror = (e) => alert("Ошибка защиты: " + e.message);
   };
 
-  // 🔒 Блокировка DevTools и копирования
+  // 🔐 Блокировка DevTools и копирования
   document.addEventListener('contextmenu', e => e.preventDefault());
   document.addEventListener('keydown', e => {
     if (
