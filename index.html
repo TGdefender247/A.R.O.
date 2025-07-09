@@ -102,15 +102,14 @@
   </div>
 
   <script>
-    // MATRIX BACKGROUND ANIMATION
+    // MATRIX
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     let width, height;
     const fontSize = 12;
-    let columns;
-    let drops;
+    let columns, drops;
 
-    function setupCanvas() {
+    function setupMatrix() {
       width = window.innerWidth;
       height = window.innerHeight;
       canvas.width = width;
@@ -124,148 +123,71 @@
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, width, height);
       ctx.fillStyle = "#ff0000";
-      for(let i = 0; i < drops.length; i++) {
+      for (let i = 0; i < drops.length; i++) {
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
         ctx.fillText(text, i * fontSize, drops[i]);
         drops[i] = drops[i] > height + Math.random() * 10000 ? 0 : drops[i] + fontSize;
       }
     }
 
-    setupCanvas();
+    setupMatrix();
     setInterval(drawMatrix, 50);
-    window.addEventListener('resize', () => {
-      setupCanvas();
-    });
+    window.addEventListener('resize', setupMatrix);
 
-    // AES DECRYPTION FUNCTION (in main thread)
-    // key and iv - Uint8Array, encrypted - base64 string
-    async function aesDecrypt(encryptedBase64, keyStr, ivStr) {
-      // конвертируем base64 в Uint8Array
-      function base64ToArrayBuffer(base64) {
-        const binaryStr = atob(base64);
-        const len = binaryStr.length;
-        const bytes = new Uint8Array(len);
-        for (let i = 0; i < len; i++) {
-          bytes[i] = binaryStr.charCodeAt(i);
-        }
-        return bytes.buffer;
-      }
-
-      const keyBytes = new TextEncoder().encode(keyStr);
-      const ivBytes = new TextEncoder().encode(ivStr);
-
-      const cryptoKey = await crypto.subtle.importKey(
-        "raw",
-        keyBytes,
-        { name: "AES-CBC" },
-        false,
-        ["decrypt"]
-      );
-      const encryptedBuffer = base64ToArrayBuffer(encryptedBase64);
-      const decryptedBuffer = await crypto.subtle.decrypt(
-        { name: "AES-CBC", iv: ivBytes },
-        cryptoKey,
-        encryptedBuffer
-      );
-
-      return new TextDecoder().decode(decryptedBuffer);
-    }
-
-    // Зашифрованные данные (base64), ключ и IV
-    // Пример шифрования нужно заменить своими значениями
-    const encryptedLinkBase64 = "9By7zY0V/6mXDc6RBLGZbGtf1E/ypQ0CLj1c+0NU2yR9Tzzsps8q6g=="; 
-    // зашифрованный tg://join?invite=sO9aHaxrj4gwM2Ix
-    const key = "16byteslongkey!";  // 16 символов
-    const iv = "16byteslongiv!!!";  // 16 символов
-
-    // Маскировка URL в адресной строке
+    // URL MASK
     history.replaceState(null, "", "https://darkportal.network/connect");
 
-    // Запрет копирования, контекстного меню, выделения
-    function blockUserActions() {
-      document.body.style.userSelect = "none";
-      document.body.addEventListener("copy", e => e.preventDefault());
-      document.body.addEventListener("cut", e => e.preventDefault());
-      document.body.addEventListener("contextmenu", e => e.preventDefault());
-      document.body.addEventListener("keydown", e => {
-        // Блокируем Ctrl+Shift+I, Ctrl+Shift+J, Ctrl+U, F12
-        if (
-          e.key === "F12" ||
-          (e.ctrlKey && e.shiftKey && (e.key === "I"  e.key === "J")) 
-          (e.ctrlKey && e.key === "U")
-        ) {
-          e.preventDefault();
-          alert("Доступ запрещён");
-          return false;
-        }
-      });
-      // Дополнительно блокируем открытие DevTools по правому клику + inspect
-      window.addEventListener("devtoolschange", () => {
-        alert("Доступ к инструментам разработчика запрещён");
-        window.close();
-      });
-    }
-    blockUserActions();
-
-    // Проверка открытых DevTools (простая)
-    let devtoolsOpen = false;
-    const threshold = 160;
-    setInterval(() => {
-      const widthThreshold = window.outerWidth - window.innerWidth > threshold;
-      const heightThreshold = window.outerHeight - window.innerHeight > threshold;
-      if (widthThreshold || heightThreshold) {
-        if (!devtoolsOpen) {
-          devtoolsOpen = true;
-          alert("Доступ к инструментам разработчика запрещён");
-          // Можно перенаправить или закрыть вкладку
-          // window.close();
-        }
-      } else {
-        devtoolsOpen = false;
+    // 🔐 BLOCK COPY / DEVTOOLS
+    document.addEventListener("contextmenu", e => e.preventDefault());
+    document.addEventListener("copy", e => e.preventDefault());
+    document.addEventListener("cut", e => e.preventDefault());
+    document.addEventListener("keydown", e => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && ["I", "J"].includes(e.key)) ||
+        (e.ctrlKey && e.key === "U")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
       }
-    }, 1000);
+    });
 
-    // Кнопка "Связаться" — расшифровка и переход с задержкой 3 секунды
+    // AES DECRYPTION
+    async function aesDecrypt(base64, keyStr, ivStr) {
+      const binary = atob(base64);
+      const encrypted = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
+      const keyBytes = new TextEncoder().encode(keyStr);
+      const ivBytes = new TextEncoder().encode(ivStr);
+      const cryptoKey = await crypto.subtle.importKey("raw", keyBytes, "AES-CBC", false, ["decrypt"]);
+      const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv: ivBytes }, cryptoKey, encrypted);
+      return new TextDecoder().decode(decrypted);
+    }
+
+    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o=";
+    const key = "mysecretkey12345";
+    const iv = "initialvector123";
+
     document.getElementById("contactBtn").addEventListener("click", async () => {
       try {
-        // Расшифровать ссылку
-        const decryptedLink = await aesDecrypt(encryptedLinkBase64, key, iv);
-
-        // Создаем страницу-переадресатор через blob с задержкой 3 сек
-        const redirectHtml = `<!DOCTYPE html>
+        const url = await aesDecrypt(encryptedLink, key, iv);
+        const html = `
+<!DOCTYPE html>
 <html>
 <head>
-  <meta charset="utf-8" />
-  <title>Redirecting...</title>
+  <meta charset="utf-8">
+  <script>
+    setTimeout(() => location.href='${url}', 3000);
+  <\/script>
   <style>
-    body {
-      background: black;
-      color: red;
-      font-family: monospace;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      margin: 0;
-      user-select: none;
-    }
+    body { background:black; color:red; font-family:monospace; display:flex; align-items:center; justify-content:center; height:100vh; }
   </style>
 </head>
-<body>
-  <h1>Переход в Telegram...</h1>
-  <script>
-    setTimeout(() => {
-      location.href = "${decryptedLink}";
-    }, 3000);
-  <\/script>
-</body>
+<body><h1>Переход в Telegram...</h1></body>
 </html>`;
 
-        const blob = new Blob([redirectHtml], { type: "text/html" });
+        const blob = new Blob([html], { type: 'text/html' });
         const blobUrl = URL.createObjectURL(blob);
         location.replace(blobUrl);
-
-        // Очистить URL blob через 7 секунд
         setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
       } catch (e) {
         alert("Ошибка при переходе: " + e.message);
