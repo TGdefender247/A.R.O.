@@ -1,24 +1,21 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="UTF-8">
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
-    body {
+    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
+    html, body {
       margin: 0;
+      padding: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      color: #fff;
       font-family: 'Share Tech Mono', monospace;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      user-select: none;
       overflow: hidden;
+      user-select: none;
     }
     canvas.matrix {
       position: fixed;
@@ -26,34 +23,60 @@
       left: 0;
       z-index: -1;
     }
+    body {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+    }
     .red-title {
+      font-family: Impact, Arial, sans-serif;
       font-size: 56px;
-      font-weight: bold;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
-      margin-bottom: 20px;
+      text-decoration: underline;
+      margin-bottom: 30px;
     }
-    .slogan, .access-log, h1 {
+    .slogan {
+      font-weight: 700;
+      font-size: 20px;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      max-width: 800px;
+      margin-bottom: 30px;
+    }
+    h1, .access-log {
+      font-weight: 700;
       font-size: 18px;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       margin: 10px 0;
-      text-align: center;
     }
     .red-button {
       padding: 12px 30px;
       font-size: 18px;
-      font-weight: bold;
-      background: #cc0000;
-      color: white;
+      font-weight: 700;
       border: none;
       border-radius: 4px;
+      background-color: #cc0000;
+      color: white;
       box-shadow: 0 0 8px #cc0000;
       cursor: pointer;
-      transition: all 0.3s ease;
+      transition: background-color 0.3s, box-shadow 0.3s;
+      user-select: none;
+      margin-top: 10px;
     }
     .red-button:hover {
-      background: #ff1a1a;
+      background-color: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
+    }
+    .under-button-note {
+      margin-top: 15px;
+      font-size: 16px;
+      font-weight: 700;
+      color: white;
+      font-family: 'Share Tech Mono', monospace;
+      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
   </style>
 </head>
@@ -61,104 +84,109 @@
   <canvas class="matrix"></canvas>
 
   <div class="red-title">ABYSS RED OVERRIDE</div>
-  <div class="slogan">мы не витрина. Мы механизм. Обход — это язык, на котором Telegram не умеет отвечать.</div>
-  <h1>Только избранный может подключиться. Нажми “<b>Связаться</b>”</h1>
-  <div class="access-log">ACCESS GRANTED — NODE_713</div>
-  <button class="red-button" id="contactBtn">Связаться</button>
+
+  <div class="slogan">
+    мы не витрина. Мы механизм.<br>
+    Рынок — это иллюзия. Снос — это геометрия.<br>
+    Обход — это язык, на котором Telegram не умеет отвечать.
+  </div>
+
+  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
+
+  <div class="access-log" id="accessLog"></div>
+
+  <button class="red-button" id="contactBtn" onmouseover="this.title = fakeLink"><b>Связаться</b></button>
+
+  <div class="under-button-note">
+    We are the top code agency for removing and protecting Telegram links.
+  </div>
 
   <script>
-    // Защита от DevTools
-    document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("keydown", e => {
-      if (
-        e.key === "F12" || 
-        (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) || 
-        (e.ctrlKey && e.key === "U")
-      ) {
-        e.preventDefault();
-        alert("Доступ запрещён");
-      }
-    });
-
-    // Маскировка URL
-    history.replaceState(null, '', 'https://darkportal.network/connect');
-
-    // Matrix animation
+    // --- MATRIX BACKGROUND ---
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
     const fontSize = 12;
     const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(1);
-    ctx.font = fontSize + "px monospace";
+    const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
+    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
 
-    function draw() {
+    function drawMatrix() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#f00";
-      for (let i = 0; i < drops.length; i++) {
+      ctx.fillStyle = "#ff0000";
+      drops.forEach((y, i) => {
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-          drops[i] = 0;
-        }
-        drops[i]++;
-      }
+        ctx.fillText(text, i * fontSize, y);
+        drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
+      });
     }
-    setInterval(draw, 50);
+    setInterval(drawMatrix, 50);
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-    // Шифрованная ссылка
-    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o=";
-    const key = "mysecretkey12345";
-    const iv = "initialvector123";
+    // --- HISTORY PUSH MASK ---
+    history.pushState({}, "", "https://darkportal.network/connect");
 
-    async function decryptAES(base64, keyStr, ivStr) {
-      const raw = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
-      const key = new TextEncoder().encode(keyStr);
-      const iv = new TextEncoder().encode(ivStr);
-      const cryptoKey = await crypto.subtle.importKey("raw", key, "AES-CBC", false, ["decrypt"]);
-      const result = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, cryptoKey, raw);
-      return new TextDecoder().decode(result);
+    // --- 50 FAKE LINKS ---
+    const fakeLinks = Array.from({ length: 50 }, (_, i) =>
+      `https://dark${i + 1}.mirror.onion`);
+    const fakeLink = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+
+    // --- 50 ACCESS NODES ---
+    const node = NODE_${Math.floor(Math.random() * 900 + 100)};
+    document.getElementById("accessLog").innerHTML = ACCESS GRANTED<br>ROUTING: ${node};
+
+    // --- REDIRECT VIA BLOB ---
+    document.getElementById("contactBtn").onclick = () => {
+      const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
+      const html = `<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="refresh" content="0; url='${link}'">
+  <script>setTimeout(() => { location.href = '${link}'; }, 100);<\/script>
+  <style>
+    body {
+      background: black;
+      color: red;
+      font-family: monospace;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
     }
+  </style>
+</head>
+<body>
+  <h1>Переход в Telegram...</h1>
+</body>
+</html>`;
+      const blobPage = new Blob([html], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blobPage);
+      location.replace(blobUrl);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+    };
 
-    document.getElementById('contactBtn').addEventListener('click', async () => {
-      try {
-        const url = await decryptAES(encryptedLink, key, iv);
-        const blobHTML = `
-          <html>
-          <head>
-            <meta charset="utf-8">
-            <title>Connecting...</title>
-            <meta http-equiv="refresh" content="3;url=${url}">
-            <script>
-              setTimeout(() => { window.location.href = '${url}'; }, 3000);
-            <\/script>
-            <style>
-              body {
-                background: black;
-                color: red;
-                font-family: monospace;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                height: 100vh;
-                margin: 0;
-              }
-            </style>
-          </head>
-          <body><h1>Переход в Telegram...</h1></body>
-          </html>
-        `;
-
-        const blob = new Blob([blobHTML], { type: 'text/html' });
-        const blobURL = URL.createObjectURL(blob);
-        window.open(blobURL, '_blank');
-        setTimeout(() => URL.revokeObjectURL(blobURL), 10000);
-      } catch (err) {
-        alert("Ошибка при переходе: " + err.message);
+    // --- DEVTOOLS / COPY / RIGHT-CLICK / VIEW SOURCE ---
+    const forbidden = ["F12", "u", "i"];
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && forbidden.includes(e.key.toLowerCase())) ||
+        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
+      ) {
+        e.preventDefault();
+        alert("Доступ запрещён");
       }
     });
+    ["contextmenu", "copy", "cut", "selectstart"].forEach(evt =>
+      document.addEventListener(evt, e => e.preventDefault())
+    );
   </script>
 </body>
 </html>
