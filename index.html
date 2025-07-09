@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>ABYSS RED OVERRIDE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
     body {
       margin: 0;
@@ -34,7 +34,9 @@
       text-shadow: 2px 2px 6px black, 0 0 12px black;
       margin-bottom: 30px;
     }
-    .slogan, .access-log, h1 {
+    .slogan,
+    .access-log,
+    h1 {
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       font-weight: 700;
       font-size: 18px;
@@ -51,6 +53,7 @@
       box-shadow: 0 0 8px #cc0000;
       cursor: pointer;
       transition: 0.3s;
+      user-select: none;
     }
     .red-button:hover {
       background-color: #ff1a1a;
@@ -59,106 +62,118 @@
   </style>
 </head>
 <body>
-<canvas class="matrix"></canvas>
+  <canvas class="matrix"></canvas>
 
-<div class="red-title">ABYSS RED OVERRIDE</div>
-<div class="slogan">Мы не витрина. Мы механизм.<br>Обход — это язык, на котором Telegram не умеет отвечать.</div>
-<h1>Только избранный может подключиться. Нажми "Связаться"</h1>
-<div class="access-log">ACCESS GRANTED // NODE_713</div>
-<button class="red-button" id="connect">Связаться</button>
+  <div class="red-title">ABYSS RED OVERRIDE</div>
+  <div class="slogan">
+    Мы не витрина. Мы механизм.<br />
+    Обход — это язык, на котором Telegram не умеет отвечать.
+  </div>
+  <h1>Только избранный может подключиться. Нажми "Связаться"</h1>
+  <div class="access-log">ACCESS GRANTED // NODE_713</div>
+  <button class="red-button" id="connect">Связаться</button>
 
-<script>
-  // MATRIX
-  const canvas = document.querySelector('.matrix');
-  const ctx = canvas.getContext('2d');
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-  const fontSize = 12;
-  const columns = Math.floor(canvas.width / fontSize);
-  const drops = Array(columns).fill(0);
-  ctx.font = fontSize + "px 'Share Tech Mono'";
-
-  function drawMatrix() {
-    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
-    ctx.fillStyle = "#ff0000";
-    drops.forEach((y, i) => {
-      const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-      ctx.fillText(text, i * fontSize, y);
-      drops[i] = y > canvas.height ? 0 : y + fontSize;
-    });
-  }
-  setInterval(drawMatrix, 50);
-  window.addEventListener("resize", () => {
+  <script>
+    // MATRIX BACKGROUND
+    const canvas = document.querySelector(".matrix");
+    const ctx = canvas.getContext("2d");
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-  });
+    const fontSize = 12;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(0);
+    ctx.font = fontSize + "px 'Share Tech Mono'";
 
-  // ENCRYPTED REDIRECT
-  const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // зашифрованная tg://join?invite=sO9aHaxrj4gwM2Ix
-  const key = "R3dAbyssEncryptX"; // AES ключ (16 символов)
-  const iv = "AbyssRedInitVect";  // AES IV (16 символов)
-
-  document.getElementById("connect").onclick = () => {
-    const worker = new Worker("secure-decrypt.js");
-    worker.postMessage({ encrypted, key, iv });
-
-    worker.onmessage = function(e) {
-      const link = e.data;
-      const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="refresh" content="3;url='${link}'">
-  <script>
-    setTimeout(() => location.href='${link}', 3000);
-  <\/script>
-  <style>
-    body {
-      background: black;
-      color: red;
-      font-family: monospace;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      margin: 0;
+    function drawMatrix() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#ff0000";
+      drops.forEach((y, i) => {
+        const text = String.fromCharCode(0x30a0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, y);
+        drops[i] = y > canvas.height ? 0 : y + fontSize;
+      });
     }
-  </style>
-</head>
-<body>
-  <h1>Подключение к защищённому каналу...</h1>
-</body>
-</html>`;
+    setInterval(drawMatrix, 50);
+    window.addEventListener("resize", () => {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
 
-      const blob = new Blob([html], { type: "text/html" });
-      const blobUrl = URL.createObjectURL(blob);
+    // Зашифрованная ссылка (tg://join?invite=...)
+    const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // Зашифрованная base64
+    const key = "R3dAbyssEncryptX"; // AES ключ 16 символов
+    const iv = "AbyssRedInitVect"; // AES IV 16 символов
 
-      // 🔒 Маскируем адрес как будто это внешний переход
-      history.pushState({}, "", "https://darkportal.network/connect");
+    document.getElementById("connect").onclick = () => {
+      const worker = new Worker("secure-decrypt.js");
+      worker.postMessage({ encrypted, key, iv });
 
-      // Переход к blob
-      location.href = blobUrl;
-      // Автоматическое удаление blob
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      worker.onmessage = function (e) {
+        if (e.data && e.data.error) {
+          alert("Ошибка шифрования: " + e.data.message);
+          return;
+        }
+
+        const link = e.data;
+
+        const html = `
+          <!DOCTYPE html>
+          <html>
+          <head>
+            <meta charset="utf-8" />
+            <meta http-equiv="refresh" content="3;url='${link}'" />
+            <script>
+              setTimeout(() => location.href='${link}', 3000);
+            <\/script>
+            <style>
+              body {
+                background: black;
+                color: red;
+                font-family: monospace;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Подключение к защищённому каналу...</h1>
+          </body>
+          </html>
+        `;
+
+        const blob = new Blob([html], { type: "text/html" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        // Маскировка адреса — вместо blob: в адресной строке будет фейковый домен
+        history.pushState({}, "", "https://darkportal.network/connect");
+
+        location.href = blobUrl;
+
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      };
+
+      worker.onerror = (e) => {
+        alert("Ошибка в WebWorker: " + e.message);
+        console.error(e);
+      };
     };
 
-    worker.onerror = (e) => alert("Ошибка защиты: " + e.message);
-  };
-
-  // 🔐 Блокировка DevTools и копирования
-  document.addEventListener('contextmenu', e => e.preventDefault());
-  document.addEventListener('keydown', e => {
-    if (
-      e.key === 'F12' ||
-      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
-      (e.ctrlKey && e.key.toLowerCase() === 'u')
-    ) {
-      e.preventDefault();
-      alert("🔐 Защищено.");
-    }
-  });
-</script>
+    // Защита от DevTools, контекстного меню и копирования
+    document.addEventListener("contextmenu", (e) => e.preventDefault());
+    document.addEventListener("keydown", (e) => {
+      if (
+        e.key === "F12" ||
+        (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) ||
+        (e.ctrlKey && e.key.toLowerCase() === "u")
+      ) {
+        e.preventDefault();
+        alert("🔐 Защищено.");
+      }
+    });
+  </script>
 </body>
 </html>
