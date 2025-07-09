@@ -6,12 +6,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
       margin: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
-      color: #fff;
+      color: white;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
@@ -29,117 +28,91 @@
       z-index: -1;
     }
     .red-title {
-      font-family: Impact, Arial, sans-serif;
-      font-size: 56px;
-      font-weight: 900;
+      font-size: 52px;
+      font-weight: bold;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
-      text-decoration: underline;
       margin-bottom: 30px;
     }
-    .slogan {
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.6;
+    .slogan, .access-log, h1 {
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
-      max-width: 800px;
-      margin-bottom: 30px;
-    }
-    h1, .access-log {
       font-weight: 700;
       font-size: 18px;
-      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
-      margin: 10px 0;
+      margin: 15px 0;
     }
     .red-button {
       padding: 12px 30px;
-      font-family: 'Share Tech Mono', monospace;
       font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      border-radius: 4px;
+      font-weight: bold;
       background-color: #cc0000;
       color: white;
+      border: none;
+      border-radius: 5px;
       box-shadow: 0 0 8px #cc0000;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
-      margin-top: 10px;
+      cursor: pointer;
+      transition: 0.3s;
     }
     .red-button:hover {
       background-color: #ff1a1a;
-      box-shadow: 0 0 15px #ff1a1a;
-    }
-    .under-button-note {
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: 700;
-      color: white;
-      font-family: 'Share Tech Mono', monospace;
-      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
+      box-shadow: 0 0 12px #ff1a1a;
     }
   </style>
 </head>
 <body>
-  <canvas class="matrix"></canvas>
+<canvas class="matrix"></canvas>
 
-  <div class="red-title">ABYSS RED OVERRIDE</div>
+<div class="red-title">ABYSS RED OVERRIDE</div>
+<div class="slogan">Мы не витрина. Мы механизм.<br>Обход — это язык, на котором Telegram не умеет отвечать.</div>
+<h1>Только избранный может подключиться. Нажми "Связаться"</h1>
+<div class="access-log">ACCESS GRANTED // NODE_713</div>
+<button class="red-button" id="connect">Связаться</button>
 
-  <div class="slogan">
-    мы не витрина. Мы механизм.<br>
-    Рынок — это иллюзия. Снос — это геометрия.<br>
-    Обход — это язык, на котором Telegram не умеет отвечать.
-  </div>
+<script>
+  // MATRIX
+  const canvas = document.querySelector('.matrix');
+  const ctx = canvas.getContext('2d');
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+  const fontSize = 12;
+  const columns = Math.floor(canvas.width / fontSize);
+  const drops = Array(columns).fill(0);
+  ctx.font = fontSize + "px 'Share Tech Mono'";
 
-  <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
-
-  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
-
-  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
-
-  <div class="under-button-note">
-    We are the top code agency for removing and protecting Telegram links.
-  </div>
-
-  <script>
-    // MATRIX BACKGROUND
-    const canvas = document.querySelector('.matrix');
-    const ctx = canvas.getContext('2d');
+  function drawMatrix() {
+    ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillStyle = "#ff0000";
+    drops.forEach((y, i) => {
+      const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+      ctx.fillText(text, i * fontSize, y);
+      drops[i] = y > canvas.height ? 0 : y + fontSize;
+    });
+  }
+  setInterval(drawMatrix, 50);
+  window.addEventListener("resize", () => {
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
-    const fontSize = 12;
-    const columns = Math.floor(canvas.width / fontSize);
-    const drops = Array(columns).fill(0).map(() => Math.random() * canvas.height);
-    ctx.font = fontSize + "px 'Share Tech Mono', monospace";
+  });
 
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.fillStyle = "#ff0000";
-      drops.forEach((y, i) => {
-        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(text, i * fontSize, y);
-        drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
-      });
-    }
+  // ENCRYPTED REDIRECT
+  const encrypted = "0DzPCOx8r9iMIMN3YtprXQ=="; // Зашифрованный tg://join...
+  const key = "R3dAbyssEncryptX"; // 16 символов (AES key)
+  const iv = "AbyssRedInitVect";  // 16 символов (AES IV)
 
-    setInterval(drawMatrix, 50);
-    window.addEventListener("resize", () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
-    // TELEGRAM REDIRECT VIA BLOB
-    document.getElementById("contactBtn").onclick = () => {
-      const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
-      const html = `<!DOCTYPE html>
+  document.getElementById("connect").onclick = () => {
+    const worker = new Worker("secure-decrypt.js");
+    worker.postMessage({ encrypted, key, iv });
+
+    worker.onmessage = function(e) {
+      const link = e.data;
+      const html = `
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
-  <meta http-equiv="refresh" content="0; url='${link}'">
+  <meta http-equiv="refresh" content="3;url='${link}'">
   <script>
-    setTimeout(() => {
-      location.href = '${link}';
-    }, 100);
+    setTimeout(() => location.href='${link}', 3000);
   <\/script>
   <style>
     body {
@@ -147,39 +120,38 @@
       color: red;
       font-family: monospace;
       display: flex;
-      justify-content: center;
       align-items: center;
+      justify-content: center;
       height: 100vh;
       margin: 0;
     }
   </style>
 </head>
 <body>
-  <h1>Переход в Telegram...</h1>
+  <h1>Подключение к защищённому каналу...</h1>
 </body>
 </html>`;
-
-      const blobPage = new Blob([html], { type: 'text/html' });
-      const blobUrl = URL.createObjectURL(blobPage);
-      location.replace(blobUrl);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      location.replace(url);
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
     };
 
-    // 🔒 DevTools / Context menu / Copy / Cut
-    const blockKeys = ["F12", "u", "i"];
-    document.addEventListener("keydown", (e) => {
-      if (
-        e.key === "F12" 
-        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) 
-        (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
-      ) {
-        e.preventDefault();
-        alert("Доступ запрещён");
-      }
-    });
-    ["contextmenu", "copy", "cut"].forEach(evt =>
-      document.body.addEventListener(evt, e => e.preventDefault())
-    );
-  </script>
+    worker.onerror = (e) => alert("Ошибка защиты: " + e.message);
+  };
+
+  // 🔒 Блокировка DevTools и копирования
+  document.addEventListener('contextmenu', e => e.preventDefault());
+  document.addEventListener('keydown', e => {
+    if (
+      e.key === 'F12' ||
+      (e.ctrlKey && e.shiftKey && ['I', 'J', 'C'].includes(e.key.toUpperCase())) ||
+      (e.ctrlKey && e.key.toLowerCase() === 'u')
+    ) {
+      e.preventDefault();
+      alert("🔐 Защищено.");
+    }
+  });
+</script>
 </body>
 </html>
