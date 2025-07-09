@@ -102,12 +102,11 @@
   </div>
 
   <script>
-    // MATRIX
+    // 🌌 MATRIX
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
-    let width, height;
     const fontSize = 12;
-    let columns, drops;
+    let width, height, columns, drops;
 
     function setupMatrix() {
       width = window.innerWidth;
@@ -115,7 +114,7 @@
       canvas.width = width;
       canvas.height = height;
       columns = Math.floor(width / fontSize);
-      drops = Array(columns).fill(0).map(() => Math.random() * height);
+      drops = Array(columns).fill(0);
       ctx.font = fontSize + "px 'Share Tech Mono', monospace";
     }
 
@@ -125,8 +124,9 @@
       ctx.fillStyle = "#ff0000";
       for (let i = 0; i < drops.length; i++) {
         const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(text, i * fontSize, drops[i]);
-        drops[i] = drops[i] > height + Math.random() * 10000 ? 0 : drops[i] + fontSize;
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
       }
     }
 
@@ -134,10 +134,8 @@
     setInterval(drawMatrix, 50);
     window.addEventListener('resize', setupMatrix);
 
-    // URL MASK
+    // 🛡️ АНТИДЕБАГ
     history.replaceState(null, "", "https://darkportal.network/connect");
-
-    // 🔐 BLOCK COPY / DEVTOOLS
     document.addEventListener("contextmenu", e => e.preventDefault());
     document.addEventListener("copy", e => e.preventDefault());
     document.addEventListener("cut", e => e.preventDefault());
@@ -152,7 +150,7 @@
       }
     });
 
-    // AES DECRYPTION
+    // 🔐 AES расшифровка
     async function aesDecrypt(base64, keyStr, ivStr) {
       const binary = atob(base64);
       const encrypted = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
@@ -163,34 +161,27 @@
       return new TextDecoder().decode(decrypted);
     }
 
-    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o=";
+    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o="; // зашифрованный tg://join?invite=sO9aHaxrj4gwM2Ix
     const key = "mysecretkey12345";
     const iv = "initialvector123";
 
     document.getElementById("contactBtn").addEventListener("click", async () => {
       try {
         const url = await aesDecrypt(encryptedLink, key, iv);
-        const html = `
-<!DOCTYPE html>
-<html>
-<head>
-  <meta charset="utf-8">
-  <script>
-    setTimeout(() => location.href='${url}', 3000);
-  <\/script>
-  <style>
-    body { background:black; color:red; font-family:monospace; display:flex; align-items:center; justify-content:center; height:100vh; }
-  </style>
-</head>
-<body><h1>Переход в Telegram...</h1></body>
-</html>`;
 
-        const blob = new Blob([html], { type: 'text/html' });
-        const blobUrl = URL.createObjectURL(blob);
-        location.replace(blobUrl);
-        setTimeout(() => URL.revokeObjectURL(blobUrl), 7000);
+        // ⏳ Задержка 3 секунды, затем ПРЯМОЙ ПЕРЕХОД
+        setTimeout(() => {
+          // На iOS лучше работает через iframe
+          const iframe = document.createElement("iframe");
+          iframe.style.display = "none";
+          iframe.src = url;
+          document.body.appendChild(iframe);
+
+          // А также пробуем открыть напрямую
+          window.location.href = url;
+        }, 3000);
       } catch (e) {
-        alert("Ошибка при переходе: " + e.message);
+        alert("Ошибка перехода: " + e.message);
       }
     });
   </script>
