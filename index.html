@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>ABYSS RED OVERRIDE</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      margin: 0;
+      background: black url('skull-bg.png') no-repeat center center fixed;
+      background-size: cover;
+      color: white;
+      font-family: monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      overflow: hidden;
+      user-select: none;
+    }
+    button {
+      margin-top: 20px;
+      padding: 10px 30px;
+      background: red;
+      border: none;
+      color: white;
+      font-weight: bold;
+      font-family: monospace;
+      box-shadow: 0 0 8px red;
+      cursor: pointer;
+    }
+    .access-log {
+      margin-top: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      text-shadow: 0 0 5px red;
+    }
+  </style>
+</head>
+<body>
+  <div class="access-log" id="routingDisplay">ACCESS GRANTED<br>ROUTING: ...</div>
+  <button id="contactBtn">Связаться</button>
+
+  <script>
+    const hackerRoutes = [
+      "/ACCESS.GRANTED/ROUTING:713", "/BLACKICE/SHADOW:42", "/VOID/MATRIX:001",
+      "/CYBERCORE/OVERRIDE:9000", "/INTRUSION/ALERT:666", "/REDALERT/SECURE/LOCK",
+      "/PHISHING/SCAM/777", "/DARKWEB/NEXUS/1001", "/PACKET/SNIFFER/77"
+    ];
+    history.pushState(null, '', location.origin + hackerRoutes[Math.floor(Math.random() * hackerRoutes.length)]);
+    const routingDisplay = document.getElementById("routingDisplay");
+    setInterval(() => {
+      const r = hackerRoutes[Math.floor(Math.random() * hackerRoutes.length)];
+      routingDisplay.innerHTML = `ACCESS GRANTED<br>ROUTING: ${r}`;
+    }, 3000);
+
+    const encrypted = "8KXQRHTW/VZ+q3/G9ZAVw5pJuWJuE0U0Xtb5PAb/smlTfYNYBk1pH7MgRTAHaZia";
+    const keyBase64 = "+hwuX8+3oxbnPPsxNUMLJQ==";
+    const ivBase64 = "UOrtmm2SRC99HsiKfG9xPA==";
+
+    document.getElementById("contactBtn").onclick = () => {
+      const worker = new Worker('secure-decrypt.js');
+      worker.postMessage({ encrypted, key: keyBase64, iv: ivBase64 });
+
+      worker.onmessage = (e) => {
+        const link = e.data;
+        const html = `<!DOCTYPE html><html><head><meta charset='utf-8'><meta http-equiv='refresh' content='0; url=${link}'><script>setTimeout(()=>{location.href='${link}'},100)<\/script><style>body{background:black;color:red;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0}</style></head><body><h1>Переход в Telegram...</h1></body></html>`;
+        const blob = new Blob([html], { type: 'text/html' });
+        const blobUrl = URL.createObjectURL(blob);
+        location.replace(blobUrl);
+        setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+      };
+    };
+  </script>
+</body>
+</html>
