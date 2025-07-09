@@ -129,34 +129,31 @@
       canvas.height = window.innerHeight;
     });
 
-    // HISTORY MASK
+    // Маскировка URL
     history.pushState({}, "", "https://darkportal.network/connect");
 
-    // FAKE LINKS (50 штук)
+    // NODE при каждом обновлении
+    const node = NODE_${Math.floor(Math.random() * 900 + 100)};
+    document.getElementById("accessLog").innerHTML = ACCESS GRANTED<br>ROUTING: ${node};
+
+    // Фейковая ссылка при наведении
     const fakeLinks = Array.from({ length: 50 }, (_, i) =>
-      `https://shadow${i + 1}.relay.net`);
+      `https://portal${i + 1}.darkentry.io`);
     const fakeLink = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
     document.getElementById("contactBtn").onmouseover = function () {
       this.title = fakeLink;
     };
 
-    // ACCESS NODE (рандом)
-    const node = NODE_${Math.floor(Math.random() * 999 + 1)};
-    document.getElementById("accessLog").innerHTML = ACCESS GRANTED<br>ROUTING: ${node};
-
-    // REDIRECT TO TELEGRAM
+    // РАБОЧИЙ ПЕРЕХОД В TELEGRAM (ИЗ ТВОЕГО КОДА)
     document.getElementById("contactBtn").onclick = () => {
       const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
-      const html = `
-<!DOCTYPE html>
+      const html = `<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="0; url='${link}'">
   <script>
-    setTimeout(() => {
-      location.href = '${link}';
-    }, 100);
+    setTimeout(() => { location.href = '${link}'; }, 100);
   <\/script>
   <style>
     body {
@@ -175,14 +172,13 @@
   <h1>Переход в Telegram...</h1>
 </body>
 </html>`;
-
-      const blob = new Blob([html], { type: "text/html" });
-      const url = URL.createObjectURL(blob);
-      window.location.href = url;
-      setTimeout(() => URL.revokeObjectURL(url), 5000);
+      const blobPage = new Blob([html], { type: 'text/html' });
+      const blobUrl = URL.createObjectURL(blobPage);
+      location.replace(blobUrl);
+      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // 🔒 DevTools / Копирование / Контекстное меню / Выделение
+    // Блокировка DevTools и действий
     const blockKeys = ["F12", "u", "i"];
     document.addEventListener("keydown", (e) => {
       if (
