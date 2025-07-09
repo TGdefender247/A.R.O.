@@ -6,21 +6,19 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet" />
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
     body {
       margin: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
-      color: #fff;
+      color: white;
       font-family: 'Share Tech Mono', monospace;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-      overflow: hidden;
+      height: 100vh;
       user-select: none;
+      overflow: hidden;
     }
     canvas.matrix {
       position: fixed;
@@ -29,54 +27,33 @@
       z-index: -1;
     }
     .red-title {
-      font-family: Impact, Arial, sans-serif;
       font-size: 56px;
-      font-weight: 900;
+      font-weight: bold;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
-      text-decoration: underline;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
     }
-    .slogan {
-      font-weight: 700;
-      font-size: 20px;
-      line-height: 1.6;
-      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
-      max-width: 800px;
-      margin-bottom: 30px;
-    }
-    h1, .access-log {
-      font-weight: 700;
+    .slogan, .access-log, h1 {
       font-size: 18px;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       margin: 10px 0;
+      text-align: center;
     }
     .red-button {
       padding: 12px 30px;
-      font-family: 'Share Tech Mono', monospace;
       font-size: 18px;
-      font-weight: 700;
-      cursor: pointer;
+      font-weight: bold;
+      background: #cc0000;
+      color: white;
       border: none;
       border-radius: 4px;
-      background-color: #cc0000;
-      color: white;
       box-shadow: 0 0 8px #cc0000;
-      transition: background-color 0.3s, box-shadow 0.3s;
-      user-select: none;
-      margin-top: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
     }
     .red-button:hover {
-      background-color: #ff1a1a;
+      background: #ff1a1a;
       box-shadow: 0 0 15px #ff1a1a;
-    }
-    .under-button-note {
-      margin-top: 15px;
-      font-size: 16px;
-      font-weight: 700;
-      color: white;
-      font-family: 'Share Tech Mono', monospace;
-      text-shadow: 1px 1px 0 red, 2px 2px 3px black;
     }
   </style>
 </head>
@@ -84,65 +61,18 @@
   <canvas class="matrix"></canvas>
 
   <div class="red-title">ABYSS RED OVERRIDE</div>
-
-  <div class="slogan">
-    мы не витрина. Мы механизм.<br />
-    Рынок — это иллюзия. Снос — это геометрия.<br />
-    Обход — это язык, на котором Telegram не умеет отвечать.
-  </div>
-
-  <h1>Только избранный может подключиться.<br />Нажми “<b>Связаться</b>”</h1>
-
-  <div class="access-log">ACCESS GRANTED<br />ROUTING: NODE_713</div>
-
-  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
-
-  <div class="under-button-note">
-    We are the top code agency for removing and protecting Telegram links.
-  </div>
+  <div class="slogan">мы не витрина. Мы механизм. Обход — это язык, на котором Telegram не умеет отвечать.</div>
+  <h1>Только избранный может подключиться. Нажми “<b>Связаться</b>”</h1>
+  <div class="access-log">ACCESS GRANTED — NODE_713</div>
+  <button class="red-button" id="contactBtn">Связаться</button>
 
   <script>
-    // 🌌 MATRIX
-    const canvas = document.querySelector('.matrix');
-    const ctx = canvas.getContext('2d');
-    const fontSize = 12;
-    let width, height, columns, drops;
-
-    function setupMatrix() {
-      width = window.innerWidth;
-      height = window.innerHeight;
-      canvas.width = width;
-      canvas.height = height;
-      columns = Math.floor(width / fontSize);
-      drops = Array(columns).fill(0);
-      ctx.font = fontSize + "px 'Share Tech Mono', monospace";
-    }
-
-    function drawMatrix() {
-      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, width, height);
-      ctx.fillStyle = "#ff0000";
-      for (let i = 0; i < drops.length; i++) {
-        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
-        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-        if (drops[i] * fontSize > height && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-      }
-    }
-
-    setupMatrix();
-    setInterval(drawMatrix, 50);
-    window.addEventListener('resize', setupMatrix);
-
-    // 🛡️ АНТИДЕБАГ
-    history.replaceState(null, "", "https://darkportal.network/connect");
+    // Защита от DevTools
     document.addEventListener("contextmenu", e => e.preventDefault());
-    document.addEventListener("copy", e => e.preventDefault());
-    document.addEventListener("cut", e => e.preventDefault());
     document.addEventListener("keydown", e => {
       if (
-        e.key === "F12" ||
-        (e.ctrlKey && e.shiftKey && ["I", "J"].includes(e.key)) ||
+        e.key === "F12" || 
+        (e.ctrlKey && e.shiftKey && ["I", "J", "C"].includes(e.key.toUpperCase())) || 
         (e.ctrlKey && e.key === "U")
       ) {
         e.preventDefault();
@@ -150,38 +80,83 @@
       }
     });
 
-    // 🔐 AES расшифровка
-    async function aesDecrypt(base64, keyStr, ivStr) {
-      const binary = atob(base64);
-      const encrypted = new Uint8Array([...binary].map(c => c.charCodeAt(0)));
-      const keyBytes = new TextEncoder().encode(keyStr);
-      const ivBytes = new TextEncoder().encode(ivStr);
-      const cryptoKey = await crypto.subtle.importKey("raw", keyBytes, "AES-CBC", false, ["decrypt"]);
-      const decrypted = await crypto.subtle.decrypt({ name: "AES-CBC", iv: ivBytes }, cryptoKey, encrypted);
-      return new TextDecoder().decode(decrypted);
-    }
+    // Маскировка URL
+    history.replaceState(null, '', 'https://darkportal.network/connect');
 
-    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o="; // зашифрованный tg://join?invite=sO9aHaxrj4gwM2Ix
+    // Matrix animation
+    const canvas = document.querySelector('.matrix');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight;
+    const fontSize = 12;
+    const columns = Math.floor(canvas.width / fontSize);
+    const drops = Array(columns).fill(1);
+    ctx.font = fontSize + "px monospace";
+
+    function draw() {
+      ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = "#f00";
+      for (let i = 0; i < drops.length; i++) {
+        const text = String.fromCharCode(0x30A0 + Math.random() * 96);
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+          drops[i] = 0;
+        }
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 50);
+
+    // Шифрованная ссылка
+    const encryptedLink = "uZMd3xrVqNdF2kJav2FPU4vm0NnXY3fJwBiwHNk7V5o=";
     const key = "mysecretkey12345";
     const iv = "initialvector123";
 
-    document.getElementById("contactBtn").addEventListener("click", async () => {
+    async function decryptAES(base64, keyStr, ivStr) {
+      const raw = Uint8Array.from(atob(base64), c => c.charCodeAt(0));
+      const key = new TextEncoder().encode(keyStr);
+      const iv = new TextEncoder().encode(ivStr);
+      const cryptoKey = await crypto.subtle.importKey("raw", key, "AES-CBC", false, ["decrypt"]);
+      const result = await crypto.subtle.decrypt({ name: "AES-CBC", iv }, cryptoKey, raw);
+      return new TextDecoder().decode(result);
+    }
+
+    document.getElementById('contactBtn').addEventListener('click', async () => {
       try {
-        const url = await aesDecrypt(encryptedLink, key, iv);
+        const url = await decryptAES(encryptedLink, key, iv);
+        const blobHTML = `
+          <html>
+          <head>
+            <meta charset="utf-8">
+            <title>Connecting...</title>
+            <meta http-equiv="refresh" content="3;url=${url}">
+            <script>
+              setTimeout(() => { window.location.href = '${url}'; }, 3000);
+            <\/script>
+            <style>
+              body {
+                background: black;
+                color: red;
+                font-family: monospace;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
+                margin: 0;
+              }
+            </style>
+          </head>
+          <body><h1>Переход в Telegram...</h1></body>
+          </html>
+        `;
 
-        // ⏳ Задержка 3 секунды, затем ПРЯМОЙ ПЕРЕХОД
-        setTimeout(() => {
-          // На iOS лучше работает через iframe
-          const iframe = document.createElement("iframe");
-          iframe.style.display = "none";
-          iframe.src = url;
-          document.body.appendChild(iframe);
-
-          // А также пробуем открыть напрямую
-          window.location.href = url;
-        }, 3000);
-      } catch (e) {
-        alert("Ошибка перехода: " + e.message);
+        const blob = new Blob([blobHTML], { type: 'text/html' });
+        const blobURL = URL.createObjectURL(blob);
+        window.open(blobURL, '_blank');
+        setTimeout(() => URL.revokeObjectURL(blobURL), 10000);
+      } catch (err) {
+        alert("Ошибка при переходе: " + err.message);
       }
     });
   </script>
