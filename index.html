@@ -93,7 +93,7 @@
 
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
+  <div class="access-log">ACCESS GRANTED<br>ROUTING: <span id="nodeInfo">NODE_...</span></div>
 
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
@@ -127,6 +127,22 @@
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
+
+    // RANDOM NODE_ ID
+    const nodeNum = Math.floor(100 + Math.random() * 900);
+    document.getElementById("nodeInfo").textContent = "NODE_" + nodeNum;
+
+    // FAKE URLS + history.pushState
+    const fakeUrls = [];
+    for (let i = 0; i < 50; i++) {
+      const rnd = Math.random().toString(36).substring(2, 10);
+      fakeUrls.push(`/entry/${rnd}`);
+    }
+    const randIndex = Math.floor(Math.random() * fakeUrls.length);
+    const fakeHost = https://darkhost${Math.floor(100 + Math.random() * 900)}.darknet.network;
+    const fakePath = fakeUrls[randIndex];
+    history.pushState({}, '', fakeHost + fakePath);
+
     // TELEGRAM REDIRECT VIA BLOB
     document.getElementById("contactBtn").onclick = () => {
       const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
@@ -157,7 +173,6 @@
   <h1>Переход в Telegram...</h1>
 </body>
 </html>`;
-
       const blobPage = new Blob([html], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blobPage);
       location.replace(blobUrl);
@@ -168,8 +183,8 @@
     const blockKeys = ["F12", "u", "i"];
     document.addEventListener("keydown", (e) => {
       if (
-        e.key === "F12" 
-        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) 
+        e.key === "F12" ||
+        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) ||
         (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
       ) {
         e.preventDefault();
