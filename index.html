@@ -93,7 +93,7 @@
 
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log">ACCESS GRANTED<br>ROUTING: <span id="nodeInfo">NODE_...</span></div>
+  <div class="access-log">ACCESS GRANTED<br>ROUTING: NODE_713</div>
 
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
@@ -122,26 +122,77 @@
         drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
       });
     }
+
     setInterval(drawMatrix, 50);
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
 
-    // RANDOM NODE_ ID
-    const nodeNum = Math.floor(100 + Math.random() * 900);
-    document.getElementById("nodeInfo").textContent = "NODE_" + nodeNum;
+    // ХАКЕРСКИЕ РОУТЫ ДЛЯ ПОДМЕНЫ URL
+    const hackerRoutes = [
+      "/ACCESS.GRANTED/ROUTING:713",
+      "/BLACKICE/SHADOW:42",
+      "/VOID/MATRIX:001",
+      "/NEURAL.NET/HACK/77",
+      "/CYBERCORE/OVERRIDE:9000",
+      "/DARKNET/NEXUS/451",
+      "/PHANTOM/TRACE:303",
+      "/CRYPTIC/PROTOCOL/88",
+      "/INTRUSION/ALERT:666",
+      "/VIRUS/LOADER/32",
+      "/STEALTH/MODE/99",
+      "/REDALERT/SECURE/LOCK",
+      "/INFILTRATE/ZONE:13",
+      "/OVERRIDE/SYSTEM/7",
+      "/BYPASS/FIREWALL/401",
+      "/ENCRYPT/KEY/7F",
+      "/ROOT/ACCESS/01",
+      "/BACKDOOR/ENTRY/404",
+      "/DEBUG/TRACE/999",
+      "/ANONYMITY/SHIELD/58",
+      "/SHELL/COMMAND/1",
+      "/HACKER/CORE/900",
+      "/PROXY/NODE/88",
+      "/NETWORK/SNIFFER/22",
+      "/PHISHING/SCAM/777",
+      "/MALWARE/DEPLOY/17",
+      "/BLACKHAT/LOADER/03",
+      "/SYN/ACK/RESET/0",
+      "/FIREWALL/BREACH/314",
+      "/DATASCRAPER/LOG/21",
+      "/INJECTION/SQL/420",
+      "/ZERODAY/EXPLOIT/007",
+      "/BOTNET/CONTROL/99",
+      "/DARKWEB/NEXUS/1001",
+      "/PACKET/SNIFFER/77",
+      "/TROJAN/HORSE/11",
+      "/ROOTKIT/INSTALL/05",
+      "/SESSION/HIJACK/63",
+      "/DATA/LEAK/404",
+      "/EXPLOIT/CHAIN/12",
+      "/VPN/PROXY/45",
+      "/PHREAK/PHONE/07",
+      "/ZIP/BOMB/02",
+      "/SECURE/SHELL/44",
+      "/KEYLOGGER/TRACE/23",
+      "/CRYPTO/MINER/31",
+      "/BUFFER/OVERFLOW/6",
+      "/DOS/ATTACK/88",
+      "/PORTSCAN/99",
+      "/ROOT/ADMIN/999",
+      "/VOID/TRACE/11",
+      "/BLACKOUT/MODE/1"
+    ];
 
-    // FAKE URLS + history.pushState
-    const fakeUrls = [];
-    for (let i = 0; i < 50; i++) {
-      const rnd = Math.random().toString(36).substring(2, 10);
-      fakeUrls.push(`/entry/${rnd}`);
-    }
-    const randIndex = Math.floor(Math.random() * fakeUrls.length);
-    const fakeHost = https://darkhost${Math.floor(100 + Math.random() * 900)}.darknet.network;
-    const fakePath = fakeUrls[randIndex];
-    history.pushState({}, '', fakeHost + fakePath);
+    // Подмена URL без перезагрузки
+    (function replaceUrl() {
+      const randomIndex = Math.floor(Math.random() * hackerRoutes.length);
+      const selectedRoute = hackerRoutes[randomIndex];
+      const newUrl = window.location.origin + selectedRoute;
+      history.pushState(null, '', newUrl);
+      console.log("URL изменён на:", newUrl);
+    })();
 
     // TELEGRAM REDIRECT VIA BLOB
     document.getElementById("contactBtn").onclick = () => {
@@ -173,6 +224,7 @@
   <h1>Переход в Telegram...</h1>
 </body>
 </html>`;
+
       const blobPage = new Blob([html], { type: 'text/html' });
       const blobUrl = URL.createObjectURL(blobPage);
       location.replace(blobUrl);
