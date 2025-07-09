@@ -1,3 +1,4 @@
+console.log("Worker загружен");
 self.onmessage = async function (e) {
   try {
     const { encrypted, key, iv } = e.data;
