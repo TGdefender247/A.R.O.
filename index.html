@@ -7,13 +7,18 @@
   <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap" rel="stylesheet">
   <style>
     @import url('https://fonts.googleapis.com/css2?family=Impact&display=swap');
-    html, body {
+    body {
       margin: 0;
-      padding: 0;
       background: black url('skull-bg.png') no-repeat center center fixed;
       background-size: cover;
       color: #fff;
       font-family: 'Share Tech Mono', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
       overflow: hidden;
       user-select: none;
     }
@@ -23,17 +28,10 @@
       left: 0;
       z-index: -1;
     }
-    body {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-height: 100vh;
-      text-align: center;
-    }
     .red-title {
       font-family: Impact, Arial, sans-serif;
       font-size: 56px;
+      font-weight: 900;
       color: red;
       text-shadow: 2px 2px 6px black, 0 0 12px black;
       text-decoration: underline;
@@ -42,6 +40,7 @@
     .slogan {
       font-weight: 700;
       font-size: 20px;
+      line-height: 1.6;
       text-shadow: 1px 1px 0 red, 2px 2px 3px black;
       max-width: 800px;
       margin-bottom: 30px;
@@ -54,14 +53,15 @@
     }
     .red-button {
       padding: 12px 30px;
+      font-family: 'Share Tech Mono', monospace;
       font-size: 18px;
       font-weight: 700;
+      cursor: pointer;
       border: none;
       border-radius: 4px;
       background-color: #cc0000;
       color: white;
       box-shadow: 0 0 8px #cc0000;
-      cursor: pointer;
       transition: background-color 0.3s, box-shadow 0.3s;
       user-select: none;
       margin-top: 10px;
@@ -93,7 +93,7 @@
 
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
 
-  <div class="access-log" id="accessLog"></div>
+  <div class="access-log">ACCESS GRANTED<br>ROUTING: <span id="nodeInfo">NODE_...</span></div>
 
   <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
@@ -122,29 +122,28 @@
         drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
       });
     }
-
     setInterval(drawMatrix, 50);
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
 
-    // Маскировка URL
-    history.pushState({}, "", "https://darkportal.network/connect");
+    // RANDOM NODE_ ID
+    const nodeNum = Math.floor(100 + Math.random() * 900);
+    document.getElementById("nodeInfo").textContent = "NODE_" + nodeNum;
 
-    // NODE при каждом обновлении
-    const node = NODE_${Math.floor(Math.random() * 900 + 100)};
-    document.getElementById("accessLog").innerHTML = ACCESS GRANTED<br>ROUTING: ${node};
+    // FAKE URLS + history.pushState
+    const fakeUrls = [];
+    for (let i = 0; i < 50; i++) {
+      const rnd = Math.random().toString(36).substring(2, 10);
+      fakeUrls.push(`/entry/${rnd}`);
+    }
+    const randIndex = Math.floor(Math.random() * fakeUrls.length);
+    const fakeHost = https://darkhost${Math.floor(100 + Math.random() * 900)}.darknet.network;
+    const fakePath = fakeUrls[randIndex];
+    history.pushState({}, '', fakeHost + fakePath);
 
-    // Фейковая ссылка при наведении
-    const fakeLinks = Array.from({ length: 50 }, (_, i) =>
-      `https://portal${i + 1}.darkentry.io`);
-    const fakeLink = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
-    document.getElementById("contactBtn").onmouseover = function () {
-      this.title = fakeLink;
-    };
-
-    // РАБОЧИЙ ПЕРЕХОД В TELEGRAM (ИЗ ТВОЕГО КОДА)
+    // TELEGRAM REDIRECT VIA BLOB
     document.getElementById("contactBtn").onclick = () => {
       const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
       const html = `<!DOCTYPE html>
@@ -153,7 +152,9 @@
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="0; url='${link}'">
   <script>
-    setTimeout(() => { location.href = '${link}'; }, 100);
+    setTimeout(() => {
+      location.href = '${link}';
+    }, 100);
   <\/script>
   <style>
     body {
@@ -178,7 +179,7 @@
       setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
     };
 
-    // Блокировка DevTools и действий
+    // 🔒 DevTools / Context menu / Copy / Cut
     const blockKeys = ["F12", "u", "i"];
     document.addEventListener("keydown", (e) => {
       if (
@@ -190,8 +191,8 @@
         alert("Доступ запрещён");
       }
     });
-    ["contextmenu", "copy", "cut", "selectstart"].forEach(evt =>
-      document.addEventListener(evt, e => e.preventDefault())
+    ["contextmenu", "copy", "cut"].forEach(evt =>
+      document.body.addEventListener(evt, e => e.preventDefault())
     );
   </script>
 </body>
