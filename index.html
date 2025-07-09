@@ -95,14 +95,14 @@
 
   <div class="access-log" id="accessLog"></div>
 
-  <button class="red-button" id="contactBtn" onmouseover="this.title = fakeLink"><b>Связаться</b></button>
+  <button class="red-button" id="contactBtn"><b>Связаться</b></button>
 
   <div class="under-button-note">
     We are the top code agency for removing and protecting Telegram links.
   </div>
 
   <script>
-    // --- MATRIX BACKGROUND ---
+    // MATRIX BACKGROUND
     const canvas = document.querySelector('.matrix');
     const ctx = canvas.getContext('2d');
     canvas.width = window.innerWidth;
@@ -122,33 +122,42 @@
         drops[i] = (y > canvas.height + Math.random() * 10000) ? 0 : y + fontSize;
       });
     }
+
     setInterval(drawMatrix, 50);
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
     });
 
-    // --- HISTORY PUSH MASK ---
+    // HISTORY MASK
     history.pushState({}, "", "https://darkportal.network/connect");
 
-    // --- 50 FAKE LINKS ---
+    // FAKE LINKS (50 штук)
     const fakeLinks = Array.from({ length: 50 }, (_, i) =>
-      `https://dark${i + 1}.mirror.onion`);
+      `https://shadow${i + 1}.relay.net`);
     const fakeLink = fakeLinks[Math.floor(Math.random() * fakeLinks.length)];
+    document.getElementById("contactBtn").onmouseover = function () {
+      this.title = fakeLink;
+    };
 
-    // --- 50 ACCESS NODES ---
-    const node = NODE_${Math.floor(Math.random() * 900 + 100)};
+    // ACCESS NODE (рандом)
+    const node = NODE_${Math.floor(Math.random() * 999 + 1)};
     document.getElementById("accessLog").innerHTML = ACCESS GRANTED<br>ROUTING: ${node};
 
-    // --- REDIRECT VIA BLOB ---
+    // REDIRECT TO TELEGRAM
     document.getElementById("contactBtn").onclick = () => {
       const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
-      const html = `<!DOCTYPE html>
+      const html = `
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
   <meta http-equiv="refresh" content="0; url='${link}'">
-  <script>setTimeout(() => { location.href = '${link}'; }, 100);<\/script>
+  <script>
+    setTimeout(() => {
+      location.href = '${link}';
+    }, 100);
+  <\/script>
   <style>
     body {
       background: black;
@@ -166,18 +175,19 @@
   <h1>Переход в Telegram...</h1>
 </body>
 </html>`;
-      const blobPage = new Blob([html], { type: 'text/html' });
-      const blobUrl = URL.createObjectURL(blobPage);
-      location.replace(blobUrl);
-      setTimeout(() => URL.revokeObjectURL(blobUrl), 5000);
+
+      const blob = new Blob([html], { type: "text/html" });
+      const url = URL.createObjectURL(blob);
+      window.location.href = url;
+      setTimeout(() => URL.revokeObjectURL(url), 5000);
     };
 
-    // --- DEVTOOLS / COPY / RIGHT-CLICK / VIEW SOURCE ---
-    const forbidden = ["F12", "u", "i"];
+    // 🔒 DevTools / Копирование / Контекстное меню / Выделение
+    const blockKeys = ["F12", "u", "i"];
     document.addEventListener("keydown", (e) => {
       if (
         e.key === "F12" ||
-        (e.ctrlKey && forbidden.includes(e.key.toLowerCase())) ||
+        (e.ctrlKey && blockKeys.includes(e.key.toLowerCase())) ||
         (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === "i")
       ) {
         e.preventDefault();
