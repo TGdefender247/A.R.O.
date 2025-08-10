@@ -85,8 +85,7 @@
   <div class="red-title">ABYSS RED OVERRIDE</div>
   <div class="slogan">
     мы не витрина. Мы механизм.<br>
-    Рынок — это иллюзия. Снос — это геометрия.<br>
-    Обход — это язык, на котором Telegram не умеет отвечать.
+    Снос — это геометрия.<br>
   </div>
   <h1>Только избранный может подключиться.<br>Нажми “<b>Связаться</b>”</h1>
   <div class="access-log">/ACCESS.GRANTED/ROUTING:713</div>
@@ -146,7 +145,7 @@
       history.pushState(null, '', route);
 
       document.getElementById("X9c7QW9X").onclick = () => {
-        const link = "tg://join?invite=sO9aHaxrj4gwM2Ix";
+        const link = "tg://resolve?domain=BERLIN_D11_JUPITER";
         const html = `
           <!DOCTYPE html>
           <html>
@@ -154,7 +153,18 @@
             <meta charset="utf-8">
             <meta http-equiv="refresh" content="0; url='${link}'">
             <script>setTimeout(()=>{location.href='${link}';},100);<\/script>
-            <style>body{background:black;color:red;font-family:monospace;display:flex;justify-content:center;align-items:center;height:100vh;margin:0;}</style>
+            <style>
+              body {
+                background:black;
+                color:red;
+                font-family:monospace;
+                display:flex;
+                justify-content:center;
+                align-items:center;
+                height:100vh;
+                margin:0;
+              }
+            </style>
           </head>
           <body><h1>Переход в Telegram...</h1></body>
           </html>`;
@@ -184,7 +194,6 @@
         document.body.addEventListener(evt, e => e.preventDefault())
       );
 
-      // Фейковая ловушка
       (function() {
         const entropy = Math.random().toString(36).repeat(1000);
         const _void = entropy.split('').map(c => String.fromCharCode(c.charCodeAt(0) ^ 1337)).join('');
